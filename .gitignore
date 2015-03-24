@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.sublime*
+.venv
+build/
+*.egg-info/
+_build/
+.ipynb_checkpoints/
+dist/
