@@ -33,59 +33,73 @@ class RepresentationMixin(object):
     """
 
     def __init__(self, positional=None, *args, **kwargs):
+        """"""
         cls = self.__class__
-
         try:
-            argspec = inspect.getfullargspec(self.__init__)
-        except AttributeError:
-            argspec = inspect.getargspec(self.__init__)
+            # On first init, class variables for repr won't exist
+            cls._repr_clsname
 
-        fun_args = argspec.args[1:]
-        kwonly = set()
-        with suppress(AttributeError):
-            fun_args.extend(argspec.kwonlyargs)
-            kwonly.update(argspec.kwonlyargs)
+            # Subclasses created after an initialisation of the superclass
+            # will require the repr class variables to be created for the new
+            # class.
+            assert cls._repr_clsname == cls.__name__
+        except (AttributeError, AssertionError):
+            cls._repr_clsname = cls.__name__
 
-        # Args can be opted in as positional
-        if positional is None:
-            positional = []
-        elif isinstance(positional, int):
-            positional = fun_args[:positional]
-        elif isinstance(positional, basestring):
-            positional = [positional]
+            # Support Python 3 and Python 2 argspecs,
+            # including keyword only arguments
+            try:
+                argspec = inspect.getfullargspec(self.__init__)
+            except AttributeError:
+                argspec = inspect.getargspec(self.__init__)
 
-        # Ensure positional args can't follow keyword args.
-        keyword_started = None
+            fun_args = argspec.args[1:]
+            kwonly = set()
+            with suppress(AttributeError):
+                fun_args.extend(argspec.kwonlyargs)
+                kwonly.update(argspec.kwonlyargs)
 
-        cls._repr_pretty_positional_args = list()
-        cls._repr_pretty_keyword_args = list()
+            # Args can be opted in as positional
+            if positional is None:
+                positional = []
+            elif isinstance(positional, int):
+                positional = fun_args[:positional]
+            elif isinstance(positional, basestring):
+                positional = [positional]
 
-        # Construct format string for __repr__
-        repr_parts = [cls.__name__, '(']
-        for i, arg in enumerate(fun_args):
-            if i:
-                repr_parts.append(', ')
+            # Ensure positional args can't follow keyword args.
+            keyword_started = None
 
-            if arg in positional:
-                repr_parts.append('{{self.{0}!r}}'.format(arg))
-                cls._repr_pretty_positional_args.append(arg)
+            # _repr_pretty_ uses lists for the pretty printer calls
+            cls._repr_pretty_positional_args = list()
+            cls._repr_pretty_keyword_args = list()
 
-                if arg in kwonly:
-                    raise ValueError("keyword only argument '{}' cannot be "
-                                     "positional".format(arg))
-                if keyword_started:
-                    raise ValueError(
-                        "positional argument '{}' cannot follow keyword"
-                        " argument '{}'".format(arg, keyword_started))
-            else:
-                keyword_started = arg
-                repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
-                cls._repr_pretty_keyword_args.append(arg)
+            # Construct format string for __repr__
+            repr_parts = [cls.__name__, '(']
+            for i, arg in enumerate(fun_args):
+                if i:
+                    repr_parts.append(', ')
 
-        repr_parts.append(')')
+                if arg in positional:
+                    repr_parts.append('{{self.{0}!r}}'.format(arg))
+                    cls._repr_pretty_positional_args.append(arg)
 
-        # Store as class variable.
-        cls._repr_formatstr = ''.join(repr_parts)
+                    if arg in kwonly:
+                        raise ValueError("keyword only argument '{}' cannot be "
+                                         "positional".format(arg))
+                    if keyword_started:
+                        raise ValueError(
+                            "positional argument '{}' cannot follow keyword"
+                            " argument '{}'".format(arg, keyword_started))
+                else:
+                    keyword_started = arg
+                    repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
+                    cls._repr_pretty_keyword_args.append(arg)
+
+            repr_parts.append(')')
+
+            # Store as class variable.
+            cls._repr_formatstr = ''.join(repr_parts)
 
         # Pass on args for cooperative multiple inheritance.
         super(RepresentationMixin, self).__init__(*args, **kwargs)
