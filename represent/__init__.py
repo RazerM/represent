@@ -5,7 +5,7 @@ from .contextlib import suppress
 from itertools import chain
 
 __author__ = 'Frazer McLean <frazer@frazermclean.co.uk>'
-__version__ = '1.0'
+__version__ = '1.0.1'
 __license__ = 'MIT'
 __description__ = 'Create __repr__ automatically or declaratively.'
 
