@@ -4,7 +4,6 @@ from __future__ import absolute_import
 try:
     from contextlib import suppress
 except ImportError:
-    print 'import error'
     class suppress(object):
         """Context manager to suppress specified exceptions
 
