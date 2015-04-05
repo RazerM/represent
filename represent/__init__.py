@@ -35,15 +35,13 @@ class RepresentationMixin(object):
     def __init__(self, positional=None, *args, **kwargs):
         """"""
         cls = self.__class__
-        try:
-            # On first init, class variables for repr won't exist
-            cls._repr_clsname
-
-            # Subclasses created after an initialisation of the superclass
-            # will require the repr class variables to be created for the new
-            # class.
-            assert cls._repr_clsname == cls.__name__
-        except (AttributeError, AssertionError):
+        # On first init, class variables for repr won't exist.
+        #
+        # Subclasses created after an initialisation of the superclass
+        # will require the repr class variables to be created for the new
+        # class.
+        if (not hasattr(cls, '_repr_clsname')
+                or cls._repr_clsname != cls.__name__):
             cls._repr_clsname = cls.__name__
 
             # Support Python 3 and Python 2 argspecs,
