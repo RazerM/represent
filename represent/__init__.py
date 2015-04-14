@@ -33,7 +33,6 @@ class RepresentationMixin(object):
     """
 
     def __init__(self, positional=None, *args, **kwargs):
-        """"""
         cls = self.__class__
         # On first init, class variables for repr won't exist.
         #
@@ -43,6 +42,7 @@ class RepresentationMixin(object):
         if (not hasattr(cls, '_repr_clsname')
                 or cls._repr_clsname != cls.__name__):
             cls._repr_clsname = cls.__name__
+            cls._repr_positional = positional
 
             # Support Python 3 and Python 2 argspecs,
             # including keyword only arguments
@@ -130,6 +130,21 @@ class RepresentationMixin(object):
                         p.breakable()
                     with p.group(len(keyword) + 1, keyword + '='):
                         p.pretty(getattr(self, keyword))
+
+    # To enable pickle support, we must ensure __init__ gets called. __new__
+    # could be used instead, but we can only make pickle call __new__ when
+    # using protocol 2 and above.
+    #
+    # Provide default __getstate__ and __setstate__ which calls __init__
+    # Subclasses that implement these must call RepresentationMixin.__init__
+    # in __setstate__.
+    def __getstate__(self):
+        return (self.__class__._repr_positional, self.__dict__)
+
+    def __setstate__(self, d):
+        positional, real_dict = d
+        RepresentationMixin.__init__(self, positional)
+        self.__dict__.update(real_dict)
 
 
 class RepresentationHelper(object):
