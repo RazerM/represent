@@ -1,6 +1,8 @@
 Represent
 ---------
 
+|PyPI Version| |Python Version| |MIT License|
+
 Installation
 ~~~~~~~~~~~~
 
@@ -66,3 +68,10 @@ Declarative Generation
 
 For pretty printer support and more information, `visit the
 documentation <http://pythonhosted.org/Represent/>`__!
+
+.. |PyPI Version| image:: http://img.shields.io/pypi/v/represent.svg?style=flat-square
+   :target: https://pypi.python.org/pypi/represent/
+.. |Python Version| image:: https://img.shields.io/badge/python-2.7%2C%203-brightgreen.svg?style=flat-square
+   :target: https://www.python.org/downloads/
+.. |MIT License| image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+   :target: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE

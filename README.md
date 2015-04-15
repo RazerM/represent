@@ -1,4 +1,12 @@
 ## Represent
+[![PyPI Version][ppi]][ppl] [![Python Version][pvi]][pvl] [![MIT License][mli]][mll]
+
+  [ppi]: http://img.shields.io/pypi/v/represent.svg?style=flat-square
+  [ppl]: https://pypi.python.org/pypi/represent/
+  [pvi]: https://img.shields.io/badge/python-2.7%2C%203-brightgreen.svg?style=flat-square
+  [pvl]: https://www.python.org/downloads/
+  [mli]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+  [mll]: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE
 
 ### Installation
 
