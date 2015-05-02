@@ -1,7 +1,7 @@
 Automatic Generation
 ====================
 
-In order to automatically generate a :code:`__repr__` for our class, we inherit from :py:class:`~represent.RepresentationMixin`.
+In order to automatically generate a :code:`__repr__` for our class, we inherit from :py:class:`~represent.ReprMixin`.
 
 .. note::
 
@@ -14,10 +14,10 @@ Simple Example
 
 .. code:: python
 
-    from represent import RepresentationMixin
+    from represent import ReprMixin
 
 
-    class Rectangle(RepresentationMixin, object):
+    class Rectangle(ReprMixin, object):
         def __init__(self, name, color, width, height):
             self.name = name
             self.color = color
@@ -36,7 +36,7 @@ Simple Example
 Pretty Printer
 --------------
 
-The :py:class:`~represent.RepresentationMixin` class also provides a :code:`_repr_pretty_` method for :py:mod:`IPython.lib.pretty`.
+The :py:class:`~represent.ReprMixin` class also provides a :code:`_repr_pretty_` method for :py:mod:`IPython.lib.pretty`.
 
 Therefore, with the simple example above, we can pretty print:
 
@@ -57,11 +57,11 @@ Therefore, with the simple example above, we can pretty print:
 Positional Arguments
 --------------------
 
-Using the :code:`positional` argument of :py:meth:`represent.RepresentationMixin.__init__` prints some arguments without their keyword as shown here:
+Using the :code:`positional` argument of :py:meth:`~represent.ReprMixin.__init__` prints some arguments without their keyword as shown here:
 
 .. code:: python
 
-    class Rectangle(RepresentationMixin, object):
+    class Rectangle(ReprMixin, object):
         def __init__(self, name, color, width, height):
             self.name = name
             self.color = color
@@ -111,11 +111,11 @@ Let's create a :code:`Cuboid` class.
 
     Cuboid(name='Hector', color='purple', width=7.2, height=3.6, depth=1.8)
 
-This works fine, but what if we want positional arguments? We need to modify :code:`Rectangle` to pass on arguments to :py:class:`~represent.RepresentationMixin`.
+This works fine, but what if we want positional arguments? We need to modify :code:`Rectangle` to pass on arguments to :py:class:`~represent.ReprMixin`.
 
 .. code:: python
 
-    class Rectangle(RepresentationMixin, object):
+    class Rectangle(ReprMixin, object):
         def __init__(self, name, color, width, height, *args, **kwargs):
             self.name = name
             self.color = color
@@ -143,7 +143,7 @@ Note that the combined :code:`super().__init__` call effectively does the follow
 .. code:: python
 
     Rectangle.__init__(self, name, color, width, height)
-    RepresentationMixin.__init__(self, positional=1)
+    ReprMixin.__init__(self, positional=1)
 
 Explicit is better than implicit, so we should use keyword arguments:
 
@@ -154,11 +154,11 @@ Explicit is better than implicit, so we should use keyword arguments:
 
 .. note::
 
-    If :code:`Rectangle` did not inherit from :py:class:`~represent.RepresentationMixin`, :code:`Cuboid` could be written as follows:
+    If :code:`Rectangle` did not inherit from :py:class:`~represent.ReprMixin`, :code:`Cuboid` could be written as follows:
 
     .. code:: python
 
-        class Cuboid(RepresentationMixin, Rectangle):
+        class Cuboid(ReprMixin, Rectangle):
             def __init__(self, name, color, width, height, depth):
                 self.depth = depth
 
@@ -167,3 +167,17 @@ Explicit is better than implicit, so we should use keyword arguments:
 
     Note that the order of the arguments has changed (not that it matters when using keyword arguments).
 
+Pickle Support
+--------------
+
+:py:class:`~represent.ReprMixin` contains ``__getstate__`` and ``__setstate__`` methods which initialise :py:class:`~represent.ReprMixin` (in addition to getting and setting ``self.__dict__``).
+
+If you need to implement your own ``__getstate__`` and ``__setstate__`` methods, make sure to call ``ReprMixin.__init__(self)`` in your ``__setstate__``.
+
+.. warning::
+
+    Make sure you pass the same `positional` argument as you do in your own ``__init__`` method, or your representation will be different for a class first instantiated by unpickling.
+
+.. note::
+
+    If you do not want to inherit ``__getstate__`` and ``__setstate__``, you can subclass :py:class:`~represent.ReprMixinBase` instead.

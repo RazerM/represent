@@ -4,11 +4,11 @@ Manual Generation
 Representation Helper
 ---------------------
 
-:py:class:`~represent.RepresentationHelper` provides a simple declarative syntax to produce a :code:`__repr__` for your class.
+:py:class:`~represent.ReprHelper` provides a simple declarative syntax to produce a :code:`__repr__` for your class.
 
 .. code:: python
 
-    from represent import RepresentationHelper
+    from represent import ReprHelper
 
 
     class ContrivedExample(object):
@@ -20,7 +20,7 @@ Representation Helper
             self.km = 1.60934 * miles
 
         def __repr__(self):
-            r = RepresentationHelper(self)
+            r = ReprHelper(self)
             r.positional_from_attr('description')
             r.positional_with_value(self.degrees * 3.141592654 / 180)
             r.keyword_from_attr('shape')
@@ -38,13 +38,13 @@ Representation Helper
 Pretty Representation Helper
 ----------------------------
 
-In addition to the :py:class:`~represent.RepresentationHelper` class, there is also a :py:class:`~represent.PrettyRepresentationHelper` class which helps provide a :code:`_repr_pretty_` method for :py:mod:`IPython.lib.pretty`
+In addition to the :py:class:`~represent.ReprHelper` class, there is also a :py:class:`~represent.PrettyReprHelper` class which helps provide a :code:`_repr_pretty_` method for :py:mod:`IPython.lib.pretty`
 
 The only difference is the additional initialisation variables required by :code:`_repr_pretty_`:
 
 .. code:: python
 
-    from represent import PrettyRepresentationHelper, RepresentationHelper
+    from represent import PrettyReprHelper, ReprHelper
 
     class ContrivedExample(object):
         def __init__(self, description, radians, shape, color, miles):
@@ -55,7 +55,7 @@ The only difference is the additional initialisation variables required by :code
             self.km = 1.60934 * miles
 
         def __repr__(self):
-            r = RepresentationHelper(self)
+            r = ReprHelper(self)
             r.positional_from_attr('description')
             r.positional_with_value(self.degrees * 3.141592654 / 180)
             r.keyword_from_attr('shape')
@@ -64,7 +64,7 @@ The only difference is the additional initialisation variables required by :code
             return str(r)
 
         def _repr_pretty(self, p, cycle):
-            with PrettyRepresentationHelper(self, p, cycle) as r:
+            with PrettyReprHelper(self, p, cycle) as r:
                 r.positional_from_attr('description')
                 r.positional_with_value(self.degrees * 3.141592654 / 180)
                 r.keyword_from_attr('shape')
@@ -93,12 +93,12 @@ Note that we use a context manager here, which ensures the closing bracket is ad
             r.keyword_with_value('miles', self.km / 1.60934)
 
         def __repr__(self):
-            r = RepresentationHelper(self)
+            r = ReprHelper(self)
             self._repr_helper(r)
             return str(r)
 
         def _repr_pretty(self, p, cycle):
-            with PrettyRepresentationHelper(self, p, cycle) as r:
+            with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
 
 .. code:: python

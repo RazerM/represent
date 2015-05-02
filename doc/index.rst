@@ -9,8 +9,9 @@ Contents:
    :maxdepth: 3
 
    installation
-   examples
+   usage
    module
+   Change Log <https://github.com/RazerM/represent/blob/master/CHANGELOG.md>
 
 Indices and tables
 ==================
@@ -18,4 +19,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
