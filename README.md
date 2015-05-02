@@ -17,10 +17,10 @@ $ pip install represent
 ### Automatic Generation
 
 ```python
-from represent import RepresentationMixin
+from represent import ReprMixin
 
 
-class Rectangle(RepresentationMixin, object):
+class Rectangle(ReprMixin, object):
     def __init__(self, name, color, width, height):
         self.name = name
         self.color = color
@@ -40,7 +40,7 @@ Rectangle(name='Timothy', color='red', width=15, height=4.5)
 ### Declarative Generation
 
 ```python
-from represent import RepresentationHelper
+from represent import ReprHelper
 
 
 class ContrivedExample(object):
@@ -52,7 +52,7 @@ class ContrivedExample(object):
         self.km = 1.60934 * miles
 
     def __repr__(self):
-        r = RepresentationHelper(self)
+        r = ReprHelper(self)
         r.positional_from_attr('description')
         r.positional_with_value(self.degrees * 3.141592654 / 180)
         r.keyword_from_attr('shape')
