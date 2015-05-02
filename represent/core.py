@@ -246,9 +246,8 @@ class PrettyReprHelper(object):
     .. code:: python
 
         def __repr__(self, p, cycle)
-            r = ReprHelper(self)
-            r.keyword_from_attr('name')
-            return str(r)
+            with PrettyReprHelper(self, p, cycle) as r:
+                r.keyword_from_attr('name')
     """
     def __init__(self, other, p, cycle):
         self.other = other
