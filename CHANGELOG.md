@@ -3,6 +3,22 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.2.0] - 2015-05-02
+### Changed
+- `RepresentationMixin` has been renamed to `ReprMixin`.
+- `RepresentationHelper` has been renamed to `ReprHelper`.
+- `PrettyRepresentationHelper` has been renamed to `PrettyReprHelper`.
+
+### Added
+- `ReprMixinBase` is available if user does not want to inherit `__getstate__` and `__setstate__` from `ReprMixin`.
+
+### Deprecated
+These aliases will raise deprecation warnings:
+
+- `RepresentationMixin`
+- `RepresentationHelper`
+- `PrettyRepresentationHelper`
+
 ## [1.1.0] - 2015-04-16
 ### Added
 - Add pickle support by instantiating `RepresentationMixin` in `__setstate__`.
@@ -19,7 +35,8 @@ N/A
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.1.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/RazerM/represent/compare/1.1.0..1.2.0
 [1.1.0]: https://github.com/RazerM/represent/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/RazerM/represent/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/RazerM/represent/compare/1.0...1.0.1
