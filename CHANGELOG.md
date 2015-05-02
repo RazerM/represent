@@ -11,6 +11,7 @@ N/A
 
 ### Added
 - `ReprMixinBase` is available if user does not want to inherit `__getstate__` and `__setstate__` from `ReprMixin`.
+- Documentation about Pickle support for ReprMixin (#2)
 
 ### Deprecated
 These aliases will raise deprecation warnings:
