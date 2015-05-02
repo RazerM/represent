@@ -3,6 +3,10 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.2.1] - 2015-05-02
+### Fixed
+- `__init__.py` was missing from represent.compat, so wasn't packaged for PyPI.
+
 ## [1.2.0] - 2015-05-02
 ### Changed
 - `RepresentationMixin` has been renamed to `ReprMixin`.
@@ -36,7 +40,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.2.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/RazerM/represent/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/RazerM/represent/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/RazerM/represent/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/RazerM/represent/compare/1.0.1...1.0.2
