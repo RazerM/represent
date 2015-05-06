@@ -12,7 +12,9 @@ def watch():
 
     gen()
     try:
-        call(['watchmedo', 'shell-command', '--patterns=*.rst;*.py', '--ignore-pattern=_build/*', '--recursive', '--command=make -C doc/ html'])
+        call(['watchmedo', 'shell-command', '--patterns=*.rst;*.py;*.css',
+              '--ignore-pattern=_build/*', '--recursive',
+              '--command=sphinx-build -b html doc doc/_build/html'])
     except FileNotFoundError:
         print('watchdog is required (pip install watchdog)')
 
@@ -27,8 +29,8 @@ def upload():
 @task
 def gen():
     """Generate html and dirhtml output."""
-    call(['make', '-C', 'doc/', 'dirhtml'])
-    call(['make', '-C', 'doc/', 'html'])
+    call(['sphinx-build', '-b', 'html', '-W', '-E', 'doc', 'doc/_build/html'])
+    call(['sphinx-build', '-b', 'dirhtml', '-W', '-E', 'doc', 'doc/_build/dirhtml'])
 
 
 @task
