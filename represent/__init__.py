@@ -1,9 +1,10 @@
 from __future__ import absolute_import, print_function
 
 from .core import *
+from .helper import *
 from .utilities import deprecated as _deprecated
 
-__all__ = core.__all__
+__all__ = core.__all__ + helper.__all__
 
 __author__ = 'Frazer McLean <frazer@frazermclean.co.uk>'
 __version__ = '1.2.1'

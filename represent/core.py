@@ -3,9 +3,10 @@ from __future__ import absolute_import, print_function
 import inspect
 
 from .compat.contextlib import suppress
+from .helper import ReprHelper, PrettyReprHelper
 
 
-__all__ = ['ReprMixin', 'ReprMixinBase', 'ReprHelper', 'PrettyReprHelper']
+__all__ = ['ReprMixin', 'ReprMixinBase', 'ReprHelperMixin']
 
 try:
     basestring
@@ -20,11 +21,6 @@ class ReprMixinBase(object):
 
     :param positional: Mark arguments as positional by number, or a list of
         argument names.
-
-    .. note::
-
-        Unconsumed arguments are passed on to :code:`__init__` of the next
-        superclass.
     """
 
     def __init__(self, positional=None, *args, **kwargs):
@@ -128,7 +124,20 @@ class ReprMixinBase(object):
 
 
 class ReprMixin(ReprMixinBase):
-    __doc__ = ReprMixinBase.__doc__
+    """Mixin to construct :code:`__repr__` for named arguments **automatically**.
+
+    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
+
+    This class differs from :py:class:`~represent.core.ReprMixinBase` in that it
+    supports unpickling by providing ``__getstate__`` and ``__setstate__``,
+    ensuring :py:class:`~represent.core.ReprMixinBase` is initialised.
+
+    :param positional: Mark arguments as positional by number, or a list of
+        argument names.
+
+    .. versionchanged:: 1.2
+       ``RepresentationMixin`` renamed to ``ReprMixin``
+    """
 
     # To enable pickle support, we must ensure __init__ gets called. __new__
     # could be used instead, but we can only make pickle call __new__ when
@@ -146,216 +155,29 @@ class ReprMixin(ReprMixinBase):
         self.__dict__.update(real_dict)
 
 
-class ReprHelper(object):
-    """Object to help manual construction of :code:`__repr__`.
+class ReprHelperMixin(object):
+    """Mixin to provide :code:`__repr__` and :code:`_repr_pretty_` for
+    :py:mod:`IPython.lib.pretty` from user defined :code:`_repr_helper_`
+    function.
 
-    It should be used as follows:
+    For full API, see :py:class:`represent.helper.ReprHelper`.
 
-    .. code:: python
+    .. code-block:: python
 
-        def __repr__(self)
-            r = ReprHelper(self)
-            r.keyword_from_attr('name')
-            return str(r)
+        def _repr_helper_(self, r):
+            r.positional_from_attr('attrname')
+            r.positional_with_value(value)
+            r.keyword_from_attr('attrname')
+            r.keyword_from_attr('keyword', 'attrname')
+            r.keyword_with_value('keyword', value)
+
+    .. versionadded:: 1.3
     """
-    def __init__(self, other):
-        self.other = other
-        self.other_cls = other.__class__
-        self.repr_parts = [self.other_cls.__name__, '(']
-        self.iarg = 0
-        self.keyword_started = False
+    def __repr__(self):
+        r = ReprHelper(self)
+        self._repr_helper_(r)
+        return str(r)
 
-    def positional_from_attr(self, attr_name):
-        """Add positional argument by retrieving attribute `attr_name`
-
-        :param str attr_name: Attribute name such that
-            :code:`getattr(self, attr_name)` returns the correct value.
-        """
-        if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
-        self._ensure_comma()
-        self.repr_parts.append(repr(getattr(self.other, attr_name)))
-        self.iarg += 1
-
-    def positional_with_value(self, value, raw=False):
-        """Add positional argument with value `value`
-
-        :param value: Value for positional argument.
-        :param bool raw: If false (default), :code:`repr(value)` is used.
-            Otherwise, the value is used as is.
-        """
-        if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
-        self._ensure_comma()
-        if raw:
-            self.repr_parts.append(value)
-        else:
-            self.repr_parts.append(repr(value))
-        self.iarg += 1
-
-    def keyword_from_attr(self, attr_name, name=None):
-        """Add keyword argument from attribute `attr_name`
-
-        :param str attr_name: Attribute name such that
-            :code:`getattr(self, attr_name)` returns the correct value.
-        :param str name: Optional name for keyword, if different than
-            `attr_name`.
-        """
-        self.keyword_started = True
-        self._ensure_comma()
-        if name:
-            self.repr_parts.append(
-                '{}={!r}'.format(attr_name, getattr(self.other, name)))
-        else:
-            self.repr_parts.append(
-                '{}={!r}'.format(attr_name, getattr(self.other, attr_name)))
-        self.iarg += 1
-
-    def keyword_with_value(self, name, value, raw=False):
-        """Add keyword argument `name` with value `value`.
-
-        :param str name: Keyword name.
-        :param value: Value for keyword argument.
-        :param bool raw: If false (default), :code:`repr(value)` is used.
-            Otherwise, the value is used as is.
-        """
-        self.keyword_started = True
-        self._ensure_comma()
-        if raw:
-            self.repr_parts.append('{}={}'.format(name, value))
-        else:
-            self.repr_parts.append('{}={!r}'.format(name, value))
-        self.iarg += 1
-
-    def _ensure_comma(self):
-        if self.iarg:
-            self.repr_parts.append(', ')
-
-    def __str__(self):
-        return ''.join(self.repr_parts + [')'])
-
-
-class PrettyReprHelper(object):
-    """Object to help manual construction of :code:`_repr_pretty_` for
-    :py:mod:`IPython.lib.pretty`.
-
-    It should be used as follows:
-
-    .. code:: python
-
-        def __repr__(self, p, cycle)
-            with PrettyReprHelper(self, p, cycle) as r:
-                r.keyword_from_attr('name')
-    """
-    def __init__(self, other, p, cycle):
-        self.other = other
-        self.p = p
-        self.cycle = cycle
-        self.other_cls = other.__class__
-        clsname = self.other_cls.__name__
-        p.begin_group(len(clsname) + 1, clsname + '(')
-        self.iarg = 0
-        self.keyword_started = False
-
-    def positional_from_attr(self, attr_name):
-        """Add positional argument by retrieving attribute `attr_name`
-
-        :param str attr_name: Attribute name such that
-            :code:`getattr(self, attr_name)` returns the correct value.
-        """
-        if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
-        self._ensure_comma()
-        self.p.pretty(getattr(self.other, attr_name))
-        self.iarg += 1
-
-    def positional_with_value(self, value, raw=False):
-        """Add positional argument with value `value`
-
-        :param value: Value for positional argument.
-        :param bool raw: If false (default), :code:`repr(value)` is used.
-            Otherwise, the value is used as is.
-        """
-        if self.cycle:
-            return
-
-        if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
-        self._ensure_comma()
-        if raw:
-            self.p.text(str(value))
-        else:
-            self.p.pretty(value)
-        self.iarg += 1
-
-    def keyword_from_attr(self, attr_name, name=None):
-        """Add keyword argument from attribute `attr_name`
-
-        :param str attr_name: Attribute name such that
-            :code:`getattr(self, attr_name)` returns the correct value.
-        :param str name: Optional name for keyword, if different than
-            `attr_name`.
-        """
-        if self.cycle:
-            return
-
-        self.keyword_started = True
-        self._ensure_comma()
-        if name:
-            with self.p.group(len(attr_name) + 1, attr_name + '='):
-                self.p.pretty(getattr(self.other, name))
-        else:
-            with self.p.group(len(attr_name) + 1, attr_name + '='):
-                self.p.pretty(getattr(self.other, attr_name))
-        self.iarg += 1
-
-    def keyword_with_value(self, name, value, raw=False):
-        """Add keyword argument `name` with value `value`.
-
-        :param str name: Keyword name.
-        :param value: Value for keyword argument.
-        :param bool raw: If false (default), :code:`repr(value)` is used.
-            Otherwise, the value is used as is.
-        """
-        if self.cycle:
-            return
-
-        self.keyword_started = True
-        self._ensure_comma()
-        if raw:
-            with self.p.group(len(name) + 1, name + '='):
-                self.p.text(str(value))
-        else:
-            with self.p.group(len(name) + 1, name + '='):
-                self.p.pretty(value)
-        self.iarg += 1
-
-    def _ensure_comma(self):
-        if self.iarg:
-            self.p.text(',')
-            self.p.breakable()
-
-    def __enter__(self):
-        """Return self for use as context manager.
-
-        Context manager calls self.close() on exit."""
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Call self.close() during exit from context manager."""
-        if exc_type:
-            return False
-
-        self.close()
-
-    def close(self):
-        """Add closing bracket."""
-        suffix = [')']
-        if self.cycle:
-            self.p.text('...')
-        clsname = self.other_cls.__name__
-        self.p.end_group(len(clsname) + 1, ')')
+    def _repr_pretty_(self, p, cycle):
+        with PrettyReprHelper(self, p, cycle) as r:
+            self._repr_helper_(r)
