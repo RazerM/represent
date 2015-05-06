@@ -52,7 +52,7 @@ Therefore, with the simple example above, we can pretty print:
     Rectangle('Something really long to force pretty printing line break',
               color='red',
               width=15,
-              height=4.5)    
+              height=4.5)
 
 Positional Arguments
 --------------------

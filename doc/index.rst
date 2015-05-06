@@ -10,7 +10,7 @@ Contents:
 
    installation
    usage
-   module
+   modules
    Change Log <https://github.com/RazerM/represent/blob/master/CHANGELOG.md>
 
 Indices and tables
