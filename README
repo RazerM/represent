@@ -39,10 +39,10 @@ Declarative Generation
 
 .. code:: python
 
-    from represent import ReprHelper
+    from represent import ReprHelperMixin
 
 
-    class ContrivedExample(object):
+    class ContrivedExample(ReprHelperMixin, object):
         def __init__(self, description, radians, shape, color, miles):
             self.description = description
             self.degrees = radians * 180 / 3.141592654
@@ -50,21 +50,27 @@ Declarative Generation
             self._color = color
             self.km = 1.60934 * miles
 
-        def __repr__(self):
-            r = ReprHelper(self)
+        def _repr_helper_(self, r):
             r.positional_from_attr('description')
             r.positional_with_value(self.degrees * 3.141592654 / 180)
             r.keyword_from_attr('shape')
             r.keyword_from_attr('color', '_color')
             r.keyword_with_value('miles', self.km / 1.60934)
-            return str(r)
 
     ce = ContrivedExample('does something', 0.345, 'square', 'red', 22)
+
     print(ce)
+    from IPython.lib.pretty import pprint
+    pprint(ce)
 
 ::
 
     ContrivedExample('does something', 0.345, shape='square', color='red', miles=22.0)
+    ContrivedExample('does something',
+                     0.345,
+                     shape='square',
+                     color='red',
+                     miles=22.0)
 
 For pretty printer support and more information, `visit the
 documentation <http://pythonhosted.org/Represent/>`__!
