@@ -3,6 +3,13 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.3.0] - 2015-05-07
+### Added
+- `ReprHelperMixin` to simplify [manual generation](http://pythonhosted.org/Represent/usage/helper/)
+
+### Fixed
+- `PrettyReprHelper.positional_from_attr()` didn't check for cycle, causing recursion limit to be reached for self-referential objects.
+
 ## [1.2.1] - 2015-05-02
 ### Fixed
 - `__init__.py` was missing from represent.compat, so wasn't packaged for PyPI.
@@ -40,7 +47,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.2.1...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/RazerM/represent/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/RazerM/represent/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/RazerM/represent/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/RazerM/represent/compare/1.0.2...1.1.0
