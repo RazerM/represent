@@ -117,7 +117,7 @@ def test_helper_mixin():
         def _repr_helper_(self, r):
             r.positional_from_attr(attr_name='description')
             r.positional_with_value(value=self.degrees * 3.141592654 / 180)
-            r.keyword_from_attr(attr_name='shape')
+            r.keyword_from_attr(name='shape')
             r.keyword_from_attr(name='color', attr_name='_color')
             r.keyword_with_value(name='miles', value=self.km / 1.60934)
 
@@ -131,6 +131,31 @@ def test_helper_mixin():
                              color='red',
                              miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+
+
+def test_helper_parantheses():
+    class A(object):
+        def __repr__(self):
+            r = ReprHelper(self)
+            r.parantheses = ('<', '>')
+            r.keyword_with_value('id', hex(id(self)), raw=True)
+            return str(r)
+
+        def _repr_pretty_(self, p, cycle):
+            r = PrettyReprHelper(self, p, cycle)
+            r.parantheses = ('<', '>')
+            with r:
+                r.keyword_with_value('id', hex(id(self)), raw=True)
+
+    a = A()
+    assert repr(a) == 'A<id={}>'.format(hex(id(a)))
+    assert pretty(a) == 'A<id={}>'.format(hex(id(a)))
+
+    # Test namedtuple for parantheses property
+    r = ReprHelper(a)
+    assert repr(r.parantheses) == "Parantheses(left='(', right=')')"
+    r.parantheses = ('<', '>')
+    assert repr(r.parantheses) == "Parantheses(left='<', right='>')"
 
 
 if __name__ == '__main__':

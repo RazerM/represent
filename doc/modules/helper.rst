@@ -8,3 +8,7 @@ represent.helper
 
 .. automodule:: represent.helper
    :members:
+   :show-inheritance:
+
+   .. autoclass:: represent.helper.BaseReprHelper
+      :members:

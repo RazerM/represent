@@ -160,7 +160,7 @@ class ReprHelperMixin(object):
     :py:mod:`IPython.lib.pretty` from user defined :code:`_repr_helper_`
     function.
 
-    For full API, see :py:class:`represent.helper.ReprHelper`.
+    For full API, see :py:class:`represent.helper.BaseReprHelper`.
 
     .. code-block:: python
 

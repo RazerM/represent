@@ -17,7 +17,7 @@ DESCRIPTION = metadata['description']
 
 AUTHOR, EMAIL = re.match(r'(.*) <(.*)>', AUTHOR_EMAIL).groups()
 
-requires = []
+requires = ['six>=1.8.0']
 
 setup(
     name='Represent',
