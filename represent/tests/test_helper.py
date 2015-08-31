@@ -112,5 +112,26 @@ def test_helper_mixin():
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
 
+
+    class ContrivedExampleKeywords(ContrivedExample):
+        def _repr_helper_(self, r):
+            r.positional_from_attr(attr_name='description')
+            r.positional_with_value(value=self.degrees * 3.141592654 / 180)
+            r.keyword_from_attr(attr_name='shape')
+            r.keyword_from_attr(name='color', attr_name='_color')
+            r.keyword_with_value(name='miles', value=self.km / 1.60934)
+
+    ce = ContrivedExampleKeywords('does something', 0.345, 'square', 'red', 22)
+    assert repr(ce) == ("ContrivedExampleKeywords('does something', 0.345, "
+                        "shape='square', color='red', miles=22.0)")
+    prettystr = """
+    ContrivedExampleKeywords('does something',
+                             0.345,
+                             shape='square',
+                             color='red',
+                             miles=22.0)"""
+    assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+
+
 if __name__ == '__main__':
     pytest.main()
