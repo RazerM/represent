@@ -50,6 +50,9 @@ class BaseReprHelper(object):
         :param str name: Keyword name. Also used as attribute name such that
             :code:`getattr(self, name)` returns the correct value.
         :param str attr_name: Attribute name, if different than `name`.
+
+        .. versionchanged:: 1.4
+           Method argument names swapped, didn't make sense before.
         """
 
     @abstractmethod
@@ -75,6 +78,17 @@ class ReprHelper(BaseReprHelper):
             r = ReprHelper(self)
             r.keyword_from_attr('name')
             return str(r)
+
+    .. versionchanged:: 1.4
+        `parantheses` property added. Must be set before `str(r)` is called:
+
+        .. code-block:: python
+
+            def __repr__(self)
+                r = ReprHelper(self)
+                r.parantheses = ('<', '>')
+                r.keyword_from_attr('name')
+                return str(r)
     """
     def __init__(self, other):
         self.repr_parts = []
@@ -138,9 +152,21 @@ class PrettyReprHelper(BaseReprHelper):
 
     .. code-block:: python
 
-        def __repr__(self, p, cycle)
+        def _repr_pretty_(self, p, cycle)
             with PrettyReprHelper(self, p, cycle) as r:
                 r.keyword_from_attr('name')
+
+    .. versionchanged:: 1.4
+        `parantheses` property added. Must be set before
+        :py:meth:`PrettyReprHelper.open` is called (usually by context manager).
+
+        .. code-block:: python
+
+            def _repr_pretty_(self, p, cycle)
+                r = PrettyReprHelper(self, p, cycle)
+                r.parantheses = ('<', '>')
+                with r:
+                    r.keyword_from_attr('name')
     """
     def __init__(self, other, p, cycle):
         self.p = p

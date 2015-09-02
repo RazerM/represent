@@ -3,6 +3,14 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.4.0] - 2015-09-02
+### Added
+- `BaseReprHelper`, base class for `ReprHelper` and `PrettyReprHelper` to handle common functionality and enforce same API and docstrings.
+- `BaseReprHelper.parantheses` tuple can be set to something other than normal brackets, e.g. `('<', '>')`
+
+### Fixed
+- `BaseReprHelper.keyword_from_attr` parameter names swapped. `attr_name` used to refer to keyword name, which doesn't make sense.
+
 ## [1.3.0] - 2015-05-07
 ### Added
 - `ReprHelperMixin` to simplify [manual generation](http://pythonhosted.org/Represent/usage/helper/)
@@ -47,7 +55,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.3.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/RazerM/represent/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/RazerM/represent/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/RazerM/represent/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/RazerM/represent/compare/1.1.0...1.2.0
