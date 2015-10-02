@@ -20,4 +20,4 @@ install:
   - pip install tox
 
 script:
-  - tox -e $TOX_ENV
+  - tox
