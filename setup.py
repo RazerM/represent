@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 import re
-
-import re
 import sys
-from collections import defaultdict
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand  # noqa
