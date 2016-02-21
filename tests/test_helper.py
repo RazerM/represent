@@ -2,8 +2,7 @@ from __future__ import absolute_import, division
 
 import textwrap
 
-import pytest
-from IPython.lib.pretty import pprint, pretty
+from IPython.lib.pretty import pretty
 
 from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin
 
@@ -111,7 +110,6 @@ def test_helper_mixin():
                      color='red',
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
-
 
     class ContrivedExampleKeywords(ContrivedExample):
         def _repr_helper_(self, r):

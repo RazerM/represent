@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division
 
 import pytest
-from IPython.lib.pretty import pprint, pretty
+from IPython.lib.pretty import pretty
 
 from represent import ReprMixin
 
