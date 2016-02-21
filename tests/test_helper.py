@@ -156,7 +156,3 @@ def test_helper_parantheses():
     assert repr(r.parantheses) == "Parantheses(left='(', right=')')"
     r.parantheses = ('<', '>')
     assert repr(r.parantheses) == "Parantheses(left='<', right='>')"
-
-
-if __name__ == '__main__':
-    pytest.main()

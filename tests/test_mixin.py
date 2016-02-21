@@ -75,7 +75,3 @@ def test_positional():
 
     with pytest.raises(TypeError):
         E()
-
-
-if __name__ == '__main__':
-    pytest.main()

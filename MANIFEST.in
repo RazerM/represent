@@ -1,0 +1,6 @@
+include CHANGELOG.md
+include LICENSE
+include tox.ini
+recursive-include tests *.py
+recursive-include doc *
+prune doc/_build
