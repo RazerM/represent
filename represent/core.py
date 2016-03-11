@@ -173,6 +173,9 @@ class ReprHelperMixin(object):
 
     .. versionadded:: 1.3
     """
+
+    __slots__ = ()
+
     def __repr__(self):
         r = ReprHelper(self)
         self._repr_helper_(r)

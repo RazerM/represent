@@ -3,6 +3,10 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.4.1] - 2016-03-11
+### Fixed
+- `__slots__` added to `ReprHelperMixin` to allow subclasses to use `__slots__`.
+
 ## [1.4.0] - 2015-09-02
 ### Added
 - `BaseReprHelper`, base class for `ReprHelper` and `PrettyReprHelper` to handle common functionality and enforce same API and docstrings.
@@ -55,7 +59,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.4.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/RazerM/represent/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/RazerM/represent/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/RazerM/represent/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/RazerM/represent/compare/1.2.0...1.2.1
