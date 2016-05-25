@@ -121,9 +121,9 @@ def _autorepr_decorate(cls, positional, repr, repr_pretty):
         # Support Python 3 and Python 2 argspecs,
         # including keyword only arguments
         try:
-            argspec = inspect.getfullargspec(cls)
+            argspec = inspect.getfullargspec(cls.__init__)
         except AttributeError:
-            argspec = inspect.getargspec(cls)
+            argspec = inspect.getargspec(cls.__init__)
 
         fun_args = argspec.args[1:]
         kwonly = set()
