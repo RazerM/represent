@@ -17,17 +17,16 @@ $ pip install represent
 ### Automatic Generation
 
 ```python
-from represent import ReprMixin
+from represent import autorepr
 
 
-class Rectangle(ReprMixin, object):
+@autorepr
+class Rectangle:
     def __init__(self, name, color, width, height):
         self.name = name
         self.color = color
         self.width = width
         self.height = height
-
-        super(Rectangle, self).__init__()
 
 rect = Rectangle('Timothy', 'red', 15, 4.5)
 print(rect)
