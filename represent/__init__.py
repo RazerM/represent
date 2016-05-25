@@ -8,7 +8,7 @@ from .utilities import deprecated as _deprecated
 __all__ = core.__all__ + helper.__all__
 
 __author__ = 'Frazer McLean <frazer@frazermclean.co.uk>'
-__version__ = '1.4.1'
+__version__ = '1.5.0'
 __license__ = 'MIT'
 __description__ = 'Create __repr__ automatically or declaratively.'
 
