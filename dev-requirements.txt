@@ -1,0 +1,7 @@
+-e .[test]
+clint
+shovel
+packaging
+sphinx
+sphinx_rtd_theme
+watchdog
