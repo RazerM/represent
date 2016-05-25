@@ -1,103 +1,83 @@
+# code: utf-8
 from __future__ import absolute_import, print_function
 
 import inspect
+from copy import copy
+from functools import partial
+
+import six
 
 from .compat.contextlib import suppress
 from .helper import ReprHelper, PrettyReprHelper
 
 
-__all__ = ['ReprMixin', 'ReprMixinBase', 'ReprHelperMixin']
-
-try:
-    basestring
-except NameError:  # Python 3
-    basestring = str
+__all__ = ['ReprHelperMixin', 'autorepr']
 
 
-class ReprMixinBase(object):
-    """Mixin to construct :code:`__repr__` for named arguments **automatically**.
+def autorepr(*args, **kwargs):
+    """Class decorator to construct :code:`__repr__` **automatically**
+    based on the arguments to ``__init__``.
 
     :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
 
     :param positional: Mark arguments as positional by number, or a list of
         argument names.
+
+    Example:
+
+        .. code-block:: python
+
+            >>> @autorepr
+            ... class A:
+            ...     def __init__(self, a, b):
+            ...         self.a = a
+            ...         self.b = b
+
+            >>> print(A(1, 2))
+            A(a=1, b=2)
+
+        .. code-block:: python
+
+            >>> @autorepr(positional=1)
+            ... class B:
+            ...     def __init__(self, a, b):
+            ...         self.a = a
+            ...         self.b = b
+
+            >>> print(A(1, 2))
+            A(1, b=2)
+
+    .. versionadded:: 1.5.0
     """
+    cls = positional = None
 
-    def __init__(self, positional=None, *args, **kwargs):
-        cls = self.__class__
-        # On first init, class variables for repr won't exist.
-        #
-        # Subclasses created after an initialisation of the superclass
-        # will require the repr class variables to be created for the new
-        # class.
-        if (not hasattr(cls, '_repr_clsname')
-                or cls._repr_clsname != cls.__name__):
-            cls._repr_clsname = cls.__name__
-            cls._repr_positional = positional
+    # We allow using @autorepr or @autorepr(positional=...), so check
+    # how we were called.
 
-            # Support Python 3 and Python 2 argspecs,
-            # including keyword only arguments
-            try:
-                argspec = inspect.getfullargspec(self.__init__)
-            except AttributeError:
-                argspec = inspect.getargspec(self.__init__)
+    if args and not kwargs:
+        if len(args) != 1:
+            raise TypeError('Class must be only positional argument.')
 
-            fun_args = argspec.args[1:]
-            kwonly = set()
-            with suppress(AttributeError):
-                fun_args.extend(argspec.kwonlyargs)
-                kwonly.update(argspec.kwonlyargs)
+        cls, = args
 
-            # Args can be opted in as positional
-            if positional is None:
-                positional = []
-            elif isinstance(positional, int):
-                positional = fun_args[:positional]
-            elif isinstance(positional, basestring):
-                positional = [positional]
+    elif not args and kwargs:
+        try:
+            positional = kwargs.pop('positional')
+        except KeyError:
+            raise TypeError(
+                "Missing required keyword-only argument: 'positional'")
 
-            # Ensure positional args can't follow keyword args.
-            keyword_started = None
+    elif (args and kwargs) or (not args and not kwargs):
+        raise TypeError(
+            "Must pass class or keyword-only argument 'positional'")
 
-            # _repr_pretty_ uses lists for the pretty printer calls
-            cls._repr_pretty_positional_args = list()
-            cls._repr_pretty_keyword_args = list()
-
-            # Construct format string for __repr__
-            repr_parts = [cls.__name__, '(']
-            for i, arg in enumerate(fun_args):
-                if i:
-                    repr_parts.append(', ')
-
-                if arg in positional:
-                    repr_parts.append('{{self.{0}!r}}'.format(arg))
-                    cls._repr_pretty_positional_args.append(arg)
-
-                    if arg in kwonly:
-                        raise ValueError("keyword only argument '{}' cannot be"
-                                         " positional".format(arg))
-                    if keyword_started:
-                        raise ValueError(
-                            "positional argument '{}' cannot follow keyword"
-                            " argument '{}'".format(arg, keyword_started))
-                else:
-                    keyword_started = arg
-                    repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
-                    cls._repr_pretty_keyword_args.append(arg)
-
-            repr_parts.append(')')
-
-            # Store as class variable.
-            cls._repr_formatstr = ''.join(repr_parts)
-
-        # Pass on args for cooperative multiple inheritance.
-        super(ReprMixinBase, self).__init__(*args, **kwargs)
+    # Define the methods we'll add to the decorated class.
 
     def __repr__(self):
         return self.__class__._repr_formatstr.format(self=self)
 
     def _repr_pretty_(self, p, cycle):
-        """Pretty printer for IPython.lib.pretty"""
+        """Pretty printer for :class:`IPython.lib.pretty`"""
         cls = self.__class__
         clsname = cls.__name__
 
@@ -122,37 +102,81 @@ class ReprMixinBase(object):
                     with p.group(len(keyword) + 1, keyword + '='):
                         p.pretty(getattr(self, keyword))
 
+    if cls is not None:
+        return _autorepr_decorate(
+            cls, positional=positional, repr=__repr__,
+            repr_pretty=_repr_pretty_)
+    elif positional is not None:
+        return partial(
+            _autorepr_decorate, positional=positional, repr=__repr__,
+            repr_pretty=_repr_pretty_)
 
-class ReprMixin(ReprMixinBase):
-    """Mixin to construct :code:`__repr__` for named arguments **automatically**.
 
-    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
+def _autorepr_decorate(cls, positional, repr, repr_pretty):
+    if (not hasattr(cls, '_repr_clsname')
+        or cls._repr_clsname != cls.__name__):
+        cls._repr_clsname = cls.__name__
+        cls._repr_positional = positional
 
-    This class differs from :py:class:`~represent.core.ReprMixinBase` in that it
-    supports unpickling by providing ``__getstate__`` and ``__setstate__``,
-    ensuring :py:class:`~represent.core.ReprMixinBase` is initialised.
+        # Support Python 3 and Python 2 argspecs,
+        # including keyword only arguments
+        try:
+            argspec = inspect.getfullargspec(cls)
+        except AttributeError:
+            argspec = inspect.getargspec(cls)
 
-    :param positional: Mark arguments as positional by number, or a list of
-        argument names.
+        fun_args = argspec.args[1:]
+        kwonly = set()
+        with suppress(AttributeError):
+            fun_args.extend(argspec.kwonlyargs)
+            kwonly.update(argspec.kwonlyargs)
 
-    .. versionchanged:: 1.2
-       ``RepresentationMixin`` renamed to ``ReprMixin``
-    """
+        # Args can be opted in as positional
+        if positional is None:
+            positional = []
+        elif isinstance(positional, int):
+            positional = fun_args[:positional]
+        elif isinstance(positional, six.string_types):
+            positional = [positional]
 
-    # To enable pickle support, we must ensure __init__ gets called. __new__
-    # could be used instead, but we can only make pickle call __new__ when
-    # using protocol 2 and above.
-    #
-    # Provide default __getstate__ and __setstate__ which calls __init__
-    # Subclasses that implement these must call ReprMixin.__init__
-    # in __setstate__.
-    def __getstate__(self):
-        return (self.__class__._repr_positional, self.__dict__)
+        # Ensure positional args can't follow keyword args.
+        keyword_started = None
 
-    def __setstate__(self, d):
-        positional, real_dict = d
-        ReprMixin.__init__(self, positional)
-        self.__dict__.update(real_dict)
+        # _repr_pretty_ uses lists for the pretty printer calls
+        cls._repr_pretty_positional_args = list()
+        cls._repr_pretty_keyword_args = list()
+
+        # Construct format string for __repr__
+        repr_parts = ['{self.__class__.__name__}', '(']
+        for i, arg in enumerate(fun_args):
+            if i:
+                repr_parts.append(', ')
+
+            if arg in positional:
+                repr_parts.append('{{self.{0}!r}}'.format(arg))
+                cls._repr_pretty_positional_args.append(arg)
+
+                if arg in kwonly:
+                    raise ValueError("keyword only argument '{}' cannot"
+                                     " be positional".format(arg))
+                if keyword_started:
+                    raise ValueError(
+                        "positional argument '{}' cannot follow keyword"
+                        " argument '{}'".format(arg, keyword_started))
+            else:
+                keyword_started = arg
+                repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
+                cls._repr_pretty_keyword_args.append(arg)
+
+        repr_parts.append(')')
+
+        # Store as class variable.
+        cls._repr_formatstr = ''.join(repr_parts)
+
+        cls.__repr__ = repr
+        cls._repr_pretty_ = repr_pretty
+
+    return cls
 
 
 class ReprHelperMixin(object):

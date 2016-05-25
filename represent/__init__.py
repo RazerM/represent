@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function
 
 from .core import *
+from .deprecated import *
 from .helper import *
 from .utilities import deprecated as _deprecated
 
@@ -11,13 +12,6 @@ __version__ = '1.4.1'
 __license__ = 'MIT'
 __description__ = 'Create __repr__ automatically or declaratively.'
 
-
-RepresentationMixin = _deprecated(
-    ReprMixin,
-    __name__,
-    'RepresentationMixin has been renamed to ReprMixin.',
-    DeprecationWarning
-)
 
 RepresentationHelper = _deprecated(
     ReprHelper,

@@ -1,3 +1,4 @@
+# code: utf-8
 from __future__ import absolute_import, print_function
 
 from abc import ABCMeta, abstractmethod
@@ -68,7 +69,7 @@ class BaseReprHelper(object):
 
 @inherit_docstrings
 class ReprHelper(BaseReprHelper):
-    """Object to help manual construction of :code:`__repr__`.
+    """Help manual construction of :code:`__repr__`.
 
     It should be used as follows:
 
@@ -80,6 +81,7 @@ class ReprHelper(BaseReprHelper):
             return str(r)
 
     .. versionchanged:: 1.4
+
         `parantheses` property added. Must be set before `str(r)` is called:
 
         .. code-block:: python
@@ -145,7 +147,7 @@ class ReprHelper(BaseReprHelper):
 
 
 class PrettyReprHelper(BaseReprHelper):
-    """Object to help manual construction of :code:`_repr_pretty_` for
+    """Help manual construction of :code:`_repr_pretty_` for
     :py:mod:`IPython.lib.pretty`.
 
     It should be used as follows:

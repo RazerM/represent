@@ -1,14 +1,16 @@
-Manual Generation
-=================
+.. _declarative-generation:
 
-Representation Helper Mixin
----------------------------
+Declarative Generation
+======================
 
-If you cannot use, or prefer not to use :py:class:`~represent.core.ReprMixin`,
+Helper Mixin
+------------
+
+If you cannot use, or prefer not to use :class:`~represent.core.ReprMixin`,
 there is an alternative declarative syntax.
 
-:py:class:`~represent.core.ReprHelperMixin` provides ``__repr__`` and
-``_repr_pretty_`` (for :py:mod:`IPython.lib.pretty`), both of which look for a
+:class:`~represent.core.ReprHelperMixin` provides ``__repr__`` and
+``_repr_pretty_`` (for :mod:`IPython.lib.pretty`), both of which look for a
 user defined function called ``_repr_helper_``.
 
 All possible method calls on the passed object `r` are shown here:
@@ -22,10 +24,10 @@ All possible method calls on the passed object `r` are shown here:
         r.keyword_from_attr('keyword', 'attrname')
         r.keyword_with_value('keyword', value)
 
-The passed object, `r`, is a :py:class:`~represent.helper.ReprHelper` or
-:py:class:`~represent.helper.PrettyReprHelper` instance, depending on whether
-``__repr__`` or ``_repr_pretty_`` was called. These classes have an identical
-API after instantiation (which is handled by the mixin class).
+The passed object, `r`, is a :class:`~represent.helper.ReprHelper` or
+:class:`~represent.helper.PrettyReprHelper` instance, depending on whether
+``__repr__`` or ``_repr_pretty_`` was called. These classes have an
+identical API after instantiation (which is handled by the mixin class).
 
 .. code-block:: python
     :linenos:
@@ -72,3 +74,12 @@ API after instantiation (which is handled by the mixin class).
 
 Note that ``raw=True`` on line 22 presents the string without quotes, because
 ``cls='datetime.datetime'`` would be incorrect.
+
+Manual Helpers
+--------------
+
+To use the declarative style without using
+:class:`~represent.core.ReprHelperMixin`, refer to the documentation for
+:class:`~represent.helper.ReprHelper` and
+:class:`~represent.helper.PrettyReprHelper`.
+

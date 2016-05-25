@@ -3,7 +3,8 @@ Module Reference
 ****************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   modules/core
-   modules/helper
+    modules/core
+    modules/helper
+    modules/deprecated

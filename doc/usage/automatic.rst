@@ -1,30 +1,28 @@
 Automatic Generation
 ====================
 
-In order to automatically generate a :code:`__repr__` for our class, we inherit from :py:class:`~represent.ReprMixin`.
+In order to automatically generate a :code:`__repr__` for our class, we use
+the :func:`~represent.core.autorepr` class decorator.
 
-.. note::
-
-    Mixin classes should appear first in the list of superclasses, with the intended base class appearing last (in this case, :code:`object`, which isn't required on Python 3).
-
-For automatic :code:`__repr__` creation, Represent assumes that the arguments for :code:`__init__` are available as instance variables.
+For automatic :code:`__repr__` creation, Represent assumes that the
+arguments for :code:`__init__` are available as instance variables. If this
+is not the case, you should use :ref:`declarative-generation`.
 
 Simple Example
 --------------
 
 .. code:: python
 
-    from represent import ReprMixin
+    from represent import autorepr
 
 
-    class Rectangle(ReprMixin, object):
+    @autorepr
+    class Rectangle:
         def __init__(self, name, color, width, height):
             self.name = name
             self.color = color
             self.width = width
             self.height = height
-
-            super(Rectangle, self).__init__()
 
     rect = Rectangle('Timothy', 'red', 15, 4.5)
     print(rect)
@@ -36,7 +34,8 @@ Simple Example
 Pretty Printer
 --------------
 
-The :py:class:`~represent.ReprMixin` class also provides a :code:`_repr_pretty_` method for :py:mod:`IPython.lib.pretty`.
+:func:`~represent.core.autorepr` also provides a
+:code:`_repr_pretty_` method for :mod:`IPython.lib.pretty`.
 
 Therefore, with the simple example above, we can pretty print:
 
@@ -57,18 +56,18 @@ Therefore, with the simple example above, we can pretty print:
 Positional Arguments
 --------------------
 
-Using the :code:`positional` argument of :py:meth:`~represent.ReprMixin.__init__` prints some arguments without their keyword as shown here:
+Using the :code:`positional` argument of :func:`~represent.core.autorepr`
+prints some arguments without their keyword as shown here:
 
 .. code:: python
 
-    class Rectangle(ReprMixin, object):
+    @autorepr(positional=1)
+    class Rectangle:
         def __init__(self, name, color, width, height):
             self.name = name
             self.color = color
             self.width = width
             self.height = height
-
-            super(Rectangle, self).__init__(positional=1)
 
     rect = Rectangle('Timothy', 'red', 15, 4.5)
     print(rect)
@@ -77,107 +76,79 @@ Using the :code:`positional` argument of :py:meth:`~represent.ReprMixin.__init__
 
     Rectangle('Timothy', color='red', width=15, height=4.5)
 
-In this case, we passed the number of positional arguments. Similarly, we could have done any of the following:
+In this case, we passed the number of positional arguments. Similarly, we
+could have done any of the following:
 
 .. code:: python
 
-    super(Rectangle, self).__init__(positional='name')
+    @autorepr(positional='name')
 
 .. code:: python
 
-    super(Rectangle, self).__init__(positional=2)
+    @autorepr(positional=2)
 
 .. code:: python
 
-    super(Rectangle, self).__init__(positional=['name', 'color'])
+    @autorepr(positional=['name', 'color'])
 
-Multiple Inheritance
---------------------
+Inheritance
+-----------
 
-Let's create a :code:`Cuboid` class.
 
-.. code:: python
+Using :func:`~represent.core.autorepr` is like defining the following
+method on the base class:
 
-    class Cuboid(Rectangle):
-        def __init__(self, name, color, width, height, depth):
-            self.depth = depth
+.. code-block:: python
 
-            super(Cuboid, self).__init__(name, color, width, height)
+    def __repr__(self):
+        return '{self.__class__.__name__}({self.a}, {self.b})'.format(self=self)
 
-    cuboid = Cuboid('Hector', 'purple', 7.2, 3.6, 1.8)
-    print(cuboid)
+Therefore, subclasses will correctly show their own class name, but showing
+the same attributes as the base class's ``__init__``.
 
-.. code-block:: none
+.. code-block:: python
 
-    Cuboid(name='Hector', color='purple', width=7.2, height=3.6, depth=1.8)
-
-This works fine, but what if we want positional arguments? We need to modify :code:`Rectangle` to pass on arguments to :py:class:`~represent.ReprMixin`.
-
-.. code:: python
-
-    class Rectangle(ReprMixin, object):
-        def __init__(self, name, color, width, height, *args, **kwargs):
-            self.name = name
-            self.color = color
-            self.width = width
+    @autorepr
+    class Rectangle:
+        def __init__(self, width, height):
             self.width = width
             self.height = height
 
-            super(Rectangle, self).__init__(*args, **kwargs)
-
-    class Cuboid(Rectangle):
-        def __init__(self, name, color, width, height, depth):
+    class Cuboid:
+        def __init__(self, width, height, depth):
+            super().__init__(width, height)
             self.depth = depth
 
-            super(Cuboid, self).__init__(name, color, width, height, positional=1)
+    rectangle = Rectangle(1, 2)
+    print(rectangle)
 
-    cuboid = Cuboid('Hector', 'purple', 7.2, 3.6, 1.8)
+    cuboid = Cuboid(1, 2, 3)
     print(cuboid)
+
+Clearly, ``Cuboid.__repr__`` is incorrect in this case:
 
 .. code-block:: none
 
-    Cuboid('Hector', color='purple', width=7.2, height=3.6, depth=1.8)
+    Rectangle(width=1, height=2)
+    Cuboid(width=1, height=2)
 
-Note that the combined :code:`super().__init__` call effectively does the following:
+This is easily fixed by using :func:`~represent.core.autorepr` on
+subclasses if their arguments are different:
 
-.. code:: python
+.. code-block:: python
 
-    Rectangle.__init__(self, name, color, width, height)
-    ReprMixin.__init__(self, positional=1)
-
-Explicit is better than implicit, so we should use keyword arguments:
-
-.. code:: python
-
-    super(Cuboid, self).__init__(name=name, color=color, width=width,
-                                 height=height, positional=1)
-
-.. note::
-
-    If :code:`Rectangle` did not inherit from :py:class:`~represent.ReprMixin`, :code:`Cuboid` could be written as follows:
-
-    .. code:: python
-
-        class Cuboid(ReprMixin, Rectangle):
-            def __init__(self, name, color, width, height, depth):
-                self.depth = depth
-
-                super(Cuboid, self).__init__(positional=1, name=name, color=color,
-                                             width=width, height=height)
-
-    Note that the order of the arguments has changed (not that it matters when using keyword arguments).
+    @autorepr
+    class Cuboid:
+        def __init__(self, width, height, depth):
+            super().__init__(width, height)
+            self.depth = depth
 
 Pickle Support
 --------------
 
-:py:class:`~represent.ReprMixin` contains ``__getstate__`` and ``__setstate__`` methods which initialise :py:class:`~represent.ReprMixin` (in addition to getting and setting ``self.__dict__``).
+The deprecated :class:`~represent.deprecated.ReprMixin` (the predecessor to
+:func:`~represent.core.autorepr`) class required special care when using
+pickle since it created ``__repr__`` during ``__init__``.
 
-If you need to implement your own ``__getstate__`` and ``__setstate__`` methods, make sure to call ``ReprMixin.__init__(self)`` in your ``__setstate__``.
-
-.. warning::
-
-    Make sure you pass the same `positional` argument as you do in your own ``__init__`` method, or your representation will be different for a class first instantiated by unpickling.
-
-.. note::
-
-    If you do not want to inherit ``__getstate__`` and ``__setstate__``, you can subclass :py:class:`~represent.ReprMixinBase` instead.
+:func:`~represent.core.autorepr` has no such limitations, as it creates
+``__repr__`` when the class is created.
