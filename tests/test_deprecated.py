@@ -71,7 +71,7 @@ def test_positional():
             self.a = a
             self.b = b
             self.c = c
-            super(D, self).__init__(positional='b')
+            super(E, self).__init__(positional='b')
 
-    with pytest.raises(TypeError):
-        E()
+    with pytest.raises(ValueError):
+        E(a=1, b=2, c=3)
