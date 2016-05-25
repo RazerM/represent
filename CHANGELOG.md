@@ -1,7 +1,17 @@
 # Change Log
 
 ## [Unreleased][unreleased]
-N/A
+### Added
+- `autorepr` class decorator to replace `ReprMixin`. `autorepr` is a much
+cleaner solution, moving errors to class creation time instead of during
+`__init__`. There are no caveats with pickling anymore.
+
+### Deprecated
+The following names will raise deprecation warnings. They will be removed
+completely in 2.0.0.
+
+- `ReprMixin`
+- `ReprMixinBase`
 
 ## [1.4.1] - 2016-03-11
 ### Fixed
