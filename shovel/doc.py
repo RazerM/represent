@@ -20,13 +20,6 @@ def watch():
 
 
 @task
-def upload():
-    """Generate, then upload to PyPI."""
-    gen()
-    call(['python', 'setup.py', 'upload_docs', '--upload-dir=doc/_build/dirhtml'])
-
-
-@task
 def gen():
     """Generate html and dirhtml output."""
     call(['sphinx-build', '-b', 'html', '-W', '-E', 'doc', 'doc/_build/html'])
