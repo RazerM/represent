@@ -59,11 +59,6 @@ def test_helper_methods():
             r.keyword_from_attr('d', '_d')
             r.keyword_with_value('e', self.e)
 
-        def __repr__(self):
-            r = ReprHelper(self)
-            self._repr_helper(r)
-            return str(r)
-
         def _repr_pretty_(self, p, cycle):
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
