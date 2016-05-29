@@ -109,30 +109,23 @@ class ReprHelper(BaseReprHelper):
             raise ValueError('positional arguments cannot '
                              'follow keyword arguments')
         self._ensure_comma()
-        if raw:
-            self.repr_parts.append(value)
-        else:
-            self.repr_parts.append(repr(value))
+        value = value if raw else repr(value)
+        self.repr_parts.append(value)
         self.iarg += 1
 
     def keyword_from_attr(self, name, attr_name=None):
         self.keyword_started = True
         self._ensure_comma()
-        if attr_name:
-            self.repr_parts.append(
-                '{}={!r}'.format(name, getattr(self.other, attr_name)))
-        else:
-            self.repr_parts.append(
-                '{}={!r}'.format(name, getattr(self.other, name)))
+        attr_name = attr_name or name
+        self.repr_parts.append(
+            '{}={!r}'.format(name, getattr(self.other, attr_name)))
         self.iarg += 1
 
     def keyword_with_value(self, name, value, raw=False):
         self.keyword_started = True
         self._ensure_comma()
-        if raw:
-            self.repr_parts.append('{}={}'.format(name, value))
-        else:
-            self.repr_parts.append('{}={!r}'.format(name, value))
+        value = value if raw else repr(value)
+        self.repr_parts.append('{}={}'.format(name, value))
         self.iarg += 1
 
     def _ensure_comma(self):
@@ -206,12 +199,9 @@ class PrettyReprHelper(BaseReprHelper):
 
         self.keyword_started = True
         self._ensure_comma()
-        if attr_name:
-            with self.p.group(len(name) + 1, name + '='):
-                self.p.pretty(getattr(self.other, attr_name))
-        else:
-            with self.p.group(len(name) + 1, name + '='):
-                self.p.pretty(getattr(self.other, name))
+        attr_name = attr_name or name
+        with self.p.group(len(name) + 1, name + '='):
+            self.p.pretty(getattr(self.other, attr_name))
         self.iarg += 1
 
     def keyword_with_value(self, name, value, raw=False):
@@ -220,11 +210,10 @@ class PrettyReprHelper(BaseReprHelper):
 
         self.keyword_started = True
         self._ensure_comma()
-        if raw:
-            with self.p.group(len(name) + 1, name + '='):
+        with self.p.group(len(name) + 1, name + '='):
+            if raw:
                 self.p.text(str(value))
-        else:
-            with self.p.group(len(name) + 1, name + '='):
+            else:
                 self.p.pretty(value)
         self.iarg += 1
 
