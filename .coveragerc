@@ -12,3 +12,4 @@ source=
 [report]
 exclude_lines=
 	if __name__ == '__main__':
+	pass

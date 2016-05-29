@@ -71,10 +71,8 @@ def test_positional():
     with pytest.raises(ValueError):
         @autorepr(positional='b')
         class E(object):
-            def __init__(self, a, b, c=5):
-                self.a = a
-                self.b = b
-                self.c = c
+            def __init__(self, a, b):
+                pass
 
 
 def test_exceptions():
