@@ -79,10 +79,7 @@ def test_positional():
 
 def test_exceptions():
     with pytest.raises(TypeError):
-        @autorepr(1)
-        class A(object):
-            def __init__(self):
-                pass
+        autorepr(1)
 
     with pytest.raises(TypeError):
         autorepr(1, 2)
