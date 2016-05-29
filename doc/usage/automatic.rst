@@ -114,7 +114,7 @@ the same attributes as the base class's ``__init__``.
             self.width = width
             self.height = height
 
-    class Cuboid:
+    class Cuboid(Rectangle):
         def __init__(self, width, height, depth):
             super().__init__(width, height)
             self.depth = depth
@@ -138,7 +138,7 @@ subclasses if their arguments are different:
 .. code-block:: python
 
     @autorepr
-    class Cuboid:
+    class Cuboid(Rectangle):
         def __init__(self, width, height, depth):
             super().__init__(width, height)
             self.depth = depth
