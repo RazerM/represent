@@ -58,7 +58,13 @@ def autorepr(*args, **kwargs):
         if len(args) != 1:
             raise TypeError('Class must be only positional argument.')
 
+
         cls, = args
+
+        if not isinstance(cls, type):
+            raise TypeError(
+                "The sole positional argument must be a class. To use the "
+                "'positional' argument, use a keyword.")
 
     elif not args and kwargs:
         try:

@@ -68,7 +68,6 @@ def test_positional():
     assert repr(D(1, 2)) == 'D(1, 2, c=5)'
     assert pretty(D(1, 2)) == 'D(1, 2, c=5)'
 
-
     with pytest.raises(ValueError):
         @autorepr(positional='b')
         class E(object):
@@ -76,3 +75,27 @@ def test_positional():
                 self.a = a
                 self.b = b
                 self.c = c
+
+
+def test_exceptions():
+    with pytest.raises(TypeError):
+        @autorepr(1)
+        class A(object):
+            def __init__(self):
+                pass
+
+    with pytest.raises(TypeError):
+        autorepr(1, 2)
+
+    with pytest.raises(TypeError):
+        autorepr(wrongkeyword=True)
+
+    with pytest.raises(TypeError):
+        autorepr()
+
+    class B(object):
+        def __init__(self):
+            pass
+
+    with pytest.raises(TypeError):
+        autorepr(B, positional=1)
