@@ -3,7 +3,7 @@ Usage
 *****
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   usage/automatic
-   usage/helper
+    usage/automatic
+    usage/helper
