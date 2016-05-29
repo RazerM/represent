@@ -1,10 +1,15 @@
 # Change Log
+## [Unreleased][unreleased]
+N/A
+
+## [1.5.1] - 2016-05-29
+### Added
+- More tests for areas missing from code coverage.
+- Links in the README to readthedocs and codecov.
+
 ### Fixed
 - `autorepr` wouldn't create methods if a subclass had the same name as its
 parent. This check has been removed.
-
-## [Unreleased][unreleased]
-N/A
 
 ## [1.5.0] - 2016-05-25
 ### Added
@@ -75,7 +80,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.5.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.5.1...HEAD
+[1.5.1]: https://github.com/RazerM/represent/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/RazerM/represent/compare/1.4.1...1.5.0
 [1.4.1]: https://github.com/RazerM/represent/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/RazerM/represent/compare/1.3.0...1.4.0
