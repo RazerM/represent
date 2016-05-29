@@ -1,0 +1,14 @@
+[run]
+branch=True
+source=
+    represent/
+    tests/
+
+[paths]
+source=
+    represent
+    .tox/*/lib/python*/site-packages/represent
+
+[report]
+exclude_lines=
+	if __name__ == '__main__':
