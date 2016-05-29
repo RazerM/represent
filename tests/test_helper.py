@@ -2,6 +2,7 @@ from __future__ import absolute_import, division
 
 import textwrap
 
+import pytest
 from IPython.lib.pretty import pretty
 
 from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin
@@ -80,6 +81,80 @@ def test_helper_methods():
                      d=RecursionChecker(...),
                      e=RecursionChecker(...))"""
     assert pretty(rc) == textwrap.dedent(prettystr).lstrip()
+
+
+def test_helper_exceptions():
+    class A(object):
+        def __init__(self, a, b):
+            self.a = a
+            self.b = b
+
+        def _repr_helper(self, r):
+            # Try to make a repr where positional arg follows keyword arg.
+            # Will raise ValueError when repr/pretty is called.
+            r.keyword_from_attr('a')
+            r.positional_from_attr('b')
+
+        def __repr__(self):
+            r = ReprHelper(self)
+            self._repr_helper(r)
+            return str(r)
+
+        def _repr_pretty_(self, p, cycle):
+            with PrettyReprHelper(self, p, cycle) as r:
+                self._repr_helper(r)
+
+    a = A(1, 2)
+
+    with pytest.raises(ValueError):
+        repr(a)
+
+    with pytest.raises(ValueError):
+        pretty(a)
+
+
+    class B(object):
+        def __init__(self, a, b):
+            self.a = a
+            self.b = b
+
+        def _repr_helper(self, r):
+            # Try to make a repr where positional arg follows keyword arg.
+            # Will raise ValueError when repr/pretty is called.
+            r.keyword_from_attr('a')
+            r.positional_with_value(self.b)
+
+        def __repr__(self):
+            r = ReprHelper(self)
+            self._repr_helper(r)
+            return str(r)
+
+        def _repr_pretty_(self, p, cycle):
+            with PrettyReprHelper(self, p, cycle) as r:
+                self._repr_helper(r)
+
+    b = B(1, 2)
+
+    with pytest.raises(ValueError):
+        repr(b)
+
+    with pytest.raises(ValueError):
+        pretty(b)
+
+
+def test_helper_raw():
+    class A(ReprHelperMixin, object):
+        def __init__(self, a, b):
+            self.a = a
+            self.b = b
+
+        def _repr_helper_(self, r):
+            r.positional_with_value(self.a, raw=True)
+            r.keyword_with_value('b', self.b, raw=True)
+
+    a = A('a', 'b')
+    assert repr(a) == 'A(a, b=b)'
+    assert pretty(a) == 'A(a, b=b)'
 
 
 def test_helper_mixin():
