@@ -119,68 +119,66 @@ def autorepr(*args, **kwargs):
 
 
 def _autorepr_decorate(cls, positional, repr, repr_pretty):
-    if (not hasattr(cls, '_repr_clsname')
-        or cls._repr_clsname != cls.__name__):
-        cls._repr_clsname = cls.__name__
-        cls._repr_positional = positional
+    cls._repr_clsname = cls.__name__
+    cls._repr_positional = positional
 
-        # Support Python 3 and Python 2 argspecs,
-        # including keyword only arguments
-        try:
-            argspec = inspect.getfullargspec(cls.__init__)
-        except AttributeError:
-            argspec = inspect.getargspec(cls.__init__)
+    # Support Python 3 and Python 2 argspecs,
+    # including keyword only arguments
+    try:
+        argspec = inspect.getfullargspec(cls.__init__)
+    except AttributeError:
+        argspec = inspect.getargspec(cls.__init__)
 
-        fun_args = argspec.args[1:]
-        kwonly = set()
-        with suppress(AttributeError):
-            fun_args.extend(argspec.kwonlyargs)
-            kwonly.update(argspec.kwonlyargs)
+    fun_args = argspec.args[1:]
+    kwonly = set()
+    with suppress(AttributeError):
+        fun_args.extend(argspec.kwonlyargs)
+        kwonly.update(argspec.kwonlyargs)
 
-        # Args can be opted in as positional
-        if positional is None:
-            positional = []
-        elif isinstance(positional, int):
-            positional = fun_args[:positional]
-        elif isinstance(positional, six.string_types):
-            positional = [positional]
+    # Args can be opted in as positional
+    if positional is None:
+        positional = []
+    elif isinstance(positional, int):
+        positional = fun_args[:positional]
+    elif isinstance(positional, six.string_types):
+        positional = [positional]
 
-        # Ensure positional args can't follow keyword args.
-        keyword_started = None
+    # Ensure positional args can't follow keyword args.
+    keyword_started = None
 
-        # _repr_pretty_ uses lists for the pretty printer calls
-        cls._repr_pretty_positional_args = list()
-        cls._repr_pretty_keyword_args = list()
+    # _repr_pretty_ uses lists for the pretty printer calls
+    cls._repr_pretty_positional_args = list()
+    cls._repr_pretty_keyword_args = list()
 
-        # Construct format string for __repr__
-        repr_parts = ['{self.__class__.__name__}', '(']
-        for i, arg in enumerate(fun_args):
-            if i:
-                repr_parts.append(', ')
+    # Construct format string for __repr__
+    repr_parts = ['{self.__class__.__name__}', '(']
+    for i, arg in enumerate(fun_args):
+        if i:
+            repr_parts.append(', ')
 
-            if arg in positional:
-                repr_parts.append('{{self.{0}!r}}'.format(arg))
-                cls._repr_pretty_positional_args.append(arg)
+        if arg in positional:
+            repr_parts.append('{{self.{0}!r}}'.format(arg))
+            cls._repr_pretty_positional_args.append(arg)
 
-                if arg in kwonly:
-                    raise ValueError("keyword only argument '{}' cannot"
-                                     " be positional".format(arg))
-                if keyword_started:
-                    raise ValueError(
-                        "positional argument '{}' cannot follow keyword"
-                        " argument '{}'".format(arg, keyword_started))
-            else:
-                keyword_started = arg
-                repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
-                cls._repr_pretty_keyword_args.append(arg)
+            if arg in kwonly:
+                raise ValueError("keyword only argument '{}' cannot"
+                                 " be positional".format(arg))
+            if keyword_started:
+                raise ValueError(
+                    "positional argument '{}' cannot follow keyword"
+                    " argument '{}'".format(arg, keyword_started))
+        else:
+            keyword_started = arg
+            repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
+            cls._repr_pretty_keyword_args.append(arg)
 
-        repr_parts.append(')')
+    repr_parts.append(')')
 
-        # Store as class variable.
-        cls._repr_formatstr = ''.join(repr_parts)
+    # Store as class variable.
+    cls._repr_formatstr = ''.join(repr_parts)
 
-        cls.__repr__ = repr
-        cls._repr_pretty_ = repr_pretty
+    cls.__repr__ = repr
+    cls._repr_pretty_ = repr_pretty
 
     return cls
 

@@ -99,3 +99,36 @@ def test_exceptions():
 
     with pytest.raises(TypeError):
         autorepr(B, positional=1)
+
+
+def test_cycle():
+    @autorepr
+    class A(object):
+        def __init__(self, a=None):
+            self.a = a
+
+    a = A()
+    a.a = a
+
+    assert pretty(a) == 'A(a=A(...))'
+
+
+def test_reuse():
+    """autorepr was looking at classname to determine whether or not to add the
+    methods, but this assumption isn't valid in some cases.
+    """
+    @autorepr
+    class A(object):
+        def __init__(self, a):
+            self.a = a
+
+    _A = A
+
+    @autorepr
+    class A(_A):
+        def __init__(self, a, b):
+            super(A, self).__init__(a=a)
+            self.b = b
+
+    a = A(1, 2)
+    assert repr(a) == 'A(a=1, b=2)'
