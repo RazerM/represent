@@ -1,5 +1,8 @@
 from __future__ import absolute_import, division
 
+import sys
+from textwrap import dedent
+
 import pytest
 from IPython.lib.pretty import pretty
 
@@ -73,6 +76,19 @@ def test_positional():
         class E(object):
             def __init__(self, a, b):
                 pass
+
+
+@pytest.mark.skipif(sys.version_info < (3,), reason="Requires Python 3")
+def test_kwonly():
+    code = dedent("""
+        with pytest.raises(ValueError):
+            @autorepr(positional='a')
+            class A:
+                def __init__(self, *, a):
+                    pass
+    """)
+
+    exec(code)
 
 
 def test_exceptions():
