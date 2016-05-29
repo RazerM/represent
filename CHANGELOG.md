@@ -1,4 +1,7 @@
 # Change Log
+### Fixed
+- `autorepr` wouldn't create methods if a subclass had the same name as its
+parent. This check has been removed.
 
 ## [Unreleased][unreleased]
 N/A
@@ -30,7 +33,7 @@ completely in 2.0.0.
 
 ## [1.3.0] - 2015-05-07
 ### Added
-- `ReprHelperMixin` to simplify [manual generation](http://pythonhosted.org/Represent/usage/helper/)
+- `ReprHelperMixin` to simplify [manual generation](http://represent.readthedocs.io/en/latest/usage/helper.html)
 
 ### Fixed
 - `PrettyReprHelper.positional_from_attr()` didn't check for cycle, causing recursion limit to be reached for self-referential objects.

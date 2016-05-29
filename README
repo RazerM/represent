@@ -1,7 +1,8 @@
 Represent
 ---------
 
-|PyPI Version| |Python Version| |MIT License|
+|PyPI Version| |Documentation| |Travis| |Coverage| |Python Version| |MIT
+License|
 
 Installation
 ~~~~~~~~~~~~
@@ -71,11 +72,14 @@ Declarative Generation
                      color='red',
                      miles=22.0)
 
-For pretty printer support and more information, `visit the
-documentation <http://pythonhosted.org/Represent/>`__!
-
 .. |PyPI Version| image:: http://img.shields.io/pypi/v/represent.svg?style=flat-square
    :target: https://pypi.python.org/pypi/represent/
+.. |Documentation| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
+   :target: http://represent.readthedocs.io/en/latest/
+.. |Travis| image:: http://img.shields.io/travis/RazerM/represent/master.svg?style=flat-square&label=travis
+   :target: https://travis-ci.org/RazerM/represent
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/RazerM/represent/master.svg?style=flat-square
+   :target: https://codecov.io/github/RazerM/represent?branch=master
 .. |Python Version| image:: https://img.shields.io/badge/python-2.7%2C%203-brightgreen.svg?style=flat-square
    :target: https://www.python.org/downloads/
 .. |MIT License| image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
