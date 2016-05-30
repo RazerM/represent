@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function
 
 import inspect
+import sys
 from copy import copy
 from functools import partial
 
@@ -118,28 +119,31 @@ def autorepr(*args, **kwargs):
             repr_pretty=_repr_pretty_)
 
 
+def _getparams(cls):
+    if sys.version_info >= (3, 3):
+        signature = inspect.signature(cls)
+        params = list(signature.parameters)
+        kwonly = {p.name for p in signature.parameters.values()
+                  if p.kind == inspect.Parameter.KEYWORD_ONLY}
+    else:
+        argspec = inspect.getargspec(cls.__init__)
+        params = argspec.args[1:]
+        kwonly = set()
+
+    return params, kwonly
+
+
 def _autorepr_decorate(cls, positional, repr, repr_pretty):
     cls._repr_clsname = cls.__name__
     cls._repr_positional = positional
 
-    # Support Python 3 and Python 2 argspecs,
-    # including keyword only arguments
-    try:
-        argspec = inspect.getfullargspec(cls.__init__)
-    except AttributeError:
-        argspec = inspect.getargspec(cls.__init__)
-
-    fun_args = argspec.args[1:]
-    kwonly = set()
-    with suppress(AttributeError):
-        fun_args.extend(argspec.kwonlyargs)
-        kwonly.update(argspec.kwonlyargs)
+    params, kwonly = _getparams(cls)
 
     # Args can be opted in as positional
     if positional is None:
         positional = []
     elif isinstance(positional, int):
-        positional = fun_args[:positional]
+        positional = params[:positional]
     elif isinstance(positional, six.string_types):
         positional = [positional]
 
@@ -152,7 +156,7 @@ def _autorepr_decorate(cls, positional, repr, repr_pretty):
 
     # Construct format string for __repr__
     repr_parts = ['{self.__class__.__name__}', '(']
-    for i, arg in enumerate(fun_args):
+    for i, arg in enumerate(params):
         if i:
             repr_parts.append(', ')
 
