@@ -1,15 +1,15 @@
 ## Represent
 [![PyPI Version][ppi]][ppl] [![Documentation][di]][dl] [![Travis][tvi]][tvl] [![Coverage][cvi]][cvl] [![Python Version][pvi]][pvl] [![MIT License][mli]][mll]
 
-  [ppi]: http://img.shields.io/pypi/v/represent.svg?style=flat-square
+  [ppi]: https://img.shields.io/pypi/v/represent.svg?style=flat-square
   [ppl]: https://pypi.python.org/pypi/represent/
   [pvi]: https://img.shields.io/badge/python-2.7%2C%203-brightgreen.svg?style=flat-square
   [pvl]: https://www.python.org/downloads/
-  [mli]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+  [mli]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
   [mll]: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE
   [di]: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-  [dl]: http://represent.readthedocs.io/en/latest/
-  [tvi]: http://img.shields.io/travis/RazerM/represent/master.svg?style=flat-square&label=travis
+  [dl]: https://represent.readthedocs.io/en/latest/
+  [tvi]: https://img.shields.io/travis/RazerM/represent/master.svg?style=flat-square&label=travis
   [tvl]: https://travis-ci.org/RazerM/represent
   [cvi]: https://img.shields.io/codecov/c/github/RazerM/represent/master.svg?style=flat-square
   [cvl]: https://codecov.io/github/RazerM/represent?branch=master
