@@ -3,12 +3,10 @@ from __future__ import absolute_import, print_function
 
 import inspect
 import sys
-from copy import copy
 from functools import partial
 
 import six
 
-from .compat.contextlib import suppress
 from .helper import ReprHelper, PrettyReprHelper
 
 
