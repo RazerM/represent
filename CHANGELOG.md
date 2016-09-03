@@ -34,18 +34,24 @@ completely in 2.0.0.
 
 ## [1.4.0] - 2015-09-02
 ### Added
-- `BaseReprHelper`, base class for `ReprHelper` and `PrettyReprHelper` to handle common functionality and enforce same API and docstrings.
-- `BaseReprHelper.parantheses` tuple can be set to something other than normal brackets, e.g. `('<', '>')`
+- `BaseReprHelper`, base class for `ReprHelper` and `PrettyReprHelper` to handle
+  common functionality and enforce same API and docstrings.
+- `BaseReprHelper.parantheses` tuple can be set to something other than normal
+  brackets, e.g. `('<', '>')`
 
 ### Fixed
-- `BaseReprHelper.keyword_from_attr` parameter names swapped. `attr_name` used to refer to keyword name, which doesn't make sense.
+- `BaseReprHelper.keyword_from_attr` parameter names swapped. `attr_name` used
+  to refer to keyword name, which doesn't make sense.
 
 ## [1.3.0] - 2015-05-07
 ### Added
-- `ReprHelperMixin` to simplify [manual generation](http://represent.readthedocs.io/en/latest/usage/helper.html)
+- `ReprHelperMixin` to simplify [manual generation][man]
+
+[man]: http://represent.readthedocs.io/en/latest/usage/helper.html
 
 ### Fixed
-- `PrettyReprHelper.positional_from_attr()` didn't check for cycle, causing recursion limit to be reached for self-referential objects.
+- `PrettyReprHelper.positional_from_attr()` didn't check for cycle, causing
+  recursion limit to be reached for self-referential objects.
 
 ## [1.2.1] - 2015-05-02
 ### Fixed
@@ -58,7 +64,8 @@ completely in 2.0.0.
 - `PrettyRepresentationHelper` has been renamed to `PrettyReprHelper`.
 
 ### Added
-- `ReprMixinBase` is available if user does not want to inherit `__getstate__` and `__setstate__` from `ReprMixin`.
+- `ReprMixinBase` is available if user does not want to inherit `__getstate__`
+  and `__setstate__` from `ReprMixin`.
 - Documentation about Pickle support for ReprMixin (#2)
 
 ### Deprecated
@@ -74,7 +81,8 @@ These aliases will raise deprecation warnings:
 
 ## [1.0.2] - 2015-04-06
 ### Fixed
-- Improve control flow for class variable check, which could previously cause a bug if assertions were disabled.
+- Improve control flow for class variable check, which could previously cause a
+  bug if assertions were disabled.
 
 ## [1.0.1] - 2015-04-05
 ### Fixed
