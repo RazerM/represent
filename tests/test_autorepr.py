@@ -143,3 +143,18 @@ def test_reuse():
 
     a = A(1, 2)
     assert repr(a) == 'A(a=1, b=2)'
+
+
+@pytest.mark.skipif(sys.version_info < (3,2), reason='Requires Python 3.2+')
+def test_recursive_repr():
+    """Test that autorepr applies the :func:`reprlib.recursive_repr` decorator."""
+    @autorepr
+    class A(object):
+        def __init__(self, a=None):
+            self.a = a
+
+    a = A()
+    a.a = a
+
+    reprstr = 'A(a=...)'
+    assert repr(a) == reprstr

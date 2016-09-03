@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division
 
 import textwrap
+import sys
 
 import pytest
 from IPython.lib.pretty import pretty
@@ -199,6 +200,24 @@ def test_helper_mixin():
                              color='red',
                              miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+
+
+@pytest.mark.skipif(sys.version_info < (3,2), reason='Requires Python 3.2+')
+def test_helper_mixin_recursive():
+    """Test that the mixin applies the :func:`reprlib.recursive_repr` decorator."""
+
+    class A(ReprHelperMixin):
+        def __init__(self, a=None):
+            self.a = a
+
+        def _repr_helper_(self, r):
+            r.keyword_from_attr('a')
+
+    a = A()
+    a.a = a
+
+    reprstr = 'A(a=...)'
+    assert repr(a) == reprstr
 
 
 def test_helper_parantheses():

@@ -1,6 +1,10 @@
 # Change Log
 ## [Unreleased][unreleased]
-N/A
+### Added
+- `autorepr` and `ReprHelperMixin` now use [`reprlib.recursive_repr`][rrr] if
+  available.
+
+[rrr]: https://docs.python.org/3.5/library/reprlib.html#reprlib.recursive_repr
 
 ## [1.5.1] - 2016-05-29
 ### Added

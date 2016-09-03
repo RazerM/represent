@@ -9,6 +9,11 @@ import six
 
 from .helper import ReprHelper, PrettyReprHelper
 
+try:
+    from reprlib import recursive_repr
+except ImportError:
+    recursive_repr = None
+
 
 __all__ = ['ReprHelperMixin', 'autorepr']
 
@@ -80,6 +85,9 @@ def autorepr(*args, **kwargs):
 
     def __repr__(self):
         return self.__class__._repr_formatstr.format(self=self)
+
+    if recursive_repr is not None:
+        __repr__ = recursive_repr()(__repr__)
 
     def _repr_pretty_(self, p, cycle):
         """Pretty printer for :class:`IPython.lib.pretty`"""
@@ -210,6 +218,9 @@ class ReprHelperMixin(object):
         r = ReprHelper(self)
         self._repr_helper_(r)
         return str(r)
+
+    if recursive_repr is not None:
+        __repr__ = recursive_repr()(__repr__)
 
     def _repr_pretty_(self, p, cycle):
         with PrettyReprHelper(self, p, cycle) as r:
