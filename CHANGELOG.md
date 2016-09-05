@@ -2,7 +2,7 @@
 ## [Unreleased][unreleased]
 ### Added
 - `autorepr` and `ReprHelperMixin` now use [`reprlib.recursive_repr`][rrr] if
-  available.
+  available. (#3)
 
 [rrr]: https://docs.python.org/3.5/library/reprlib.html#reprlib.recursive_repr
 
