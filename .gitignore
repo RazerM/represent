@@ -7,3 +7,5 @@ build/
 _build/
 .ipynb_checkpoints/
 dist/
+.tox/
+.cache/
