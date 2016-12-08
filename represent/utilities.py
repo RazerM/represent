@@ -51,4 +51,5 @@ def inherit_docstrings(cls):
                     break
     return cls
 
-Parantheses = namedtuple('Parantheses', ['left', 'right'])
+Parantheses = namedtuple('Parantheses', 'left, right')
+ReprInfo = namedtuple('ReprInfo', 'fstr, args, kw')

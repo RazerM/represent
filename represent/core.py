@@ -8,6 +8,7 @@ from functools import partial
 import six
 
 from .helper import ReprHelper, PrettyReprHelper
+from .utilities import ReprInfo
 
 try:
     from reprlib import recursive_repr
@@ -62,7 +63,6 @@ def autorepr(*args, **kwargs):
         if len(args) != 1:
             raise TypeError('Class must be only positional argument.')
 
-
         cls, = args
 
         if not isinstance(cls, type):
@@ -84,7 +84,7 @@ def autorepr(*args, **kwargs):
     # Define the methods we'll add to the decorated class.
 
     def __repr__(self):
-        return self.__class__._repr_formatstr.format(self=self)
+        return self.__class__._represent.fstr.format(self=self)
 
     if recursive_repr is not None:
         __repr__ = recursive_repr()(__repr__)
@@ -97,8 +97,8 @@ def autorepr(*args, **kwargs):
         if cycle:
             p.text('{}(...)'.format(clsname))
         else:
-            positional_args = cls._repr_pretty_positional_args
-            keyword_args = cls._repr_pretty_keyword_args
+            positional_args = cls._represent.args
+            keyword_args = cls._represent.kw
 
             with p.group(len(clsname) + 1, clsname + '(', ')'):
                 for i, positional in enumerate(positional_args):
@@ -157,18 +157,18 @@ def _autorepr_decorate(cls, positional, repr, repr_pretty):
     keyword_started = None
 
     # _repr_pretty_ uses lists for the pretty printer calls
-    cls._repr_pretty_positional_args = list()
-    cls._repr_pretty_keyword_args = list()
+    repr_args = []
+    repr_kw = []
 
     # Construct format string for __repr__
-    repr_parts = ['{self.__class__.__name__}', '(']
+    repr_fstr_parts = ['{self.__class__.__name__}', '(']
     for i, arg in enumerate(params):
         if i:
-            repr_parts.append(', ')
+            repr_fstr_parts.append(', ')
 
         if arg in positional:
-            repr_parts.append('{{self.{0}!r}}'.format(arg))
-            cls._repr_pretty_positional_args.append(arg)
+            repr_fstr_parts.append('{{self.{0}!r}}'.format(arg))
+            repr_args.append(arg)
 
             if arg in kwonly:
                 raise ValueError("keyword only argument '{}' cannot"
@@ -179,13 +179,13 @@ def _autorepr_decorate(cls, positional, repr, repr_pretty):
                     " argument '{}'".format(arg, keyword_started))
         else:
             keyword_started = arg
-            repr_parts.append('{0}={{self.{0}!r}}'.format(arg))
-            cls._repr_pretty_keyword_args.append(arg)
+            repr_fstr_parts.append('{0}={{self.{0}!r}}'.format(arg))
+            repr_kw.append(arg)
 
-    repr_parts.append(')')
+    repr_fstr_parts.append(')')
 
     # Store as class variable.
-    cls._repr_formatstr = ''.join(repr_parts)
+    cls._represent = ReprInfo(''.join(repr_fstr_parts), repr_args, repr_kw)
 
     cls.__repr__ = repr
     cls._repr_pretty_ = repr_pretty

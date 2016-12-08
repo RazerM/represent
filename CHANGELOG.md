@@ -3,6 +3,9 @@
 ### Added
 - `autorepr` and `ReprHelperMixin` now use [`reprlib.recursive_repr`][rrr] if
   available. (#3)
+### Changed
+- `autorepr` now assigns one `namedtuple` to `cls._represent` instead of using
+  three different class variables as before.
 
 [rrr]: https://docs.python.org/3.5/library/reprlib.html#reprlib.recursive_repr
 
