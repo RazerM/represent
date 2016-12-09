@@ -9,19 +9,19 @@ before_script:
 test:2.7:
   image: python:2.7
   script:
-  - py.test
+  - pytest
 
 test:3.3:
   image: python:3.3
   script:
-  - py.test
+  - pytest
 
 test:3.4:
   image: python:3.4
   script:
-  - py.test
+  - pytest
 
 test:3.5:
   image: python:3.5
   script:
-  - py.test
+  - pytest
