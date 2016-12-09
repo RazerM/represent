@@ -26,7 +26,7 @@ extras_require = dict()
 
 extras_require['test'] = {
     'ipython',
-    'pytest>=2.7.3',
+    'pytest>=3.0.5',
 }
 
 
