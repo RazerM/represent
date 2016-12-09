@@ -26,10 +26,13 @@ def autorepr(*args, **kwargs):
     """Class decorator to construct :code:`__repr__` **automatically**
     based on the arguments to ``__init__``.
 
-    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
+    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed,
+    unless `include_pretty=False`.
 
     :param positional: Mark arguments as positional by number, or a list of
         argument names.
+    :param include_pretty: Add a ``_repr_pretty_`` to the class (defaults to
+        True).
 
     Example:
 
