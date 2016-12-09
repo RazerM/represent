@@ -8,13 +8,20 @@ from IPython.lib.pretty import pretty
 
 from represent import autorepr
 
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
+
 
 def test_standard():
+    @mock_repr_pretty
     @autorepr
     class A(object):
         def __init__(self):
             pass
 
+    @mock_repr_pretty
     @autorepr
     class B(object):
         def __init__(self, a, b, c=5):
@@ -24,12 +31,16 @@ def test_standard():
 
     assert repr(A()) == 'A()'
     assert pretty(A()) == 'A()'
+    assert A._repr_pretty_.called
 
     assert repr(B(1, 2)) == 'B(a=1, b=2, c=5)'
     assert pretty(B(1, 2)) == 'B(a=1, b=2, c=5)'
+    assert B._repr_pretty_.called
+
 
 
 def test_positional():
+    @mock_repr_pretty
     @autorepr(positional=1)
     class A(object):
         def __init__(self, a, b, c=5):
@@ -37,6 +48,7 @@ def test_positional():
             self.b = b
             self.c = c
 
+    @mock_repr_pretty
     @autorepr(positional=2)
     class B(object):
         def __init__(self, a, b, c=5):
@@ -44,6 +56,7 @@ def test_positional():
             self.b = b
             self.c = c
 
+    @mock_repr_pretty
     @autorepr(positional='a')
     class C(object):
         def __init__(self, a, b, c=5):
@@ -51,6 +64,7 @@ def test_positional():
             self.b = b
             self.c = c
 
+    @mock_repr_pretty
     @autorepr(positional=['a', 'b'])
     class D(object):
         def __init__(self, a, b, c=5):
@@ -58,18 +72,21 @@ def test_positional():
             self.b = b
             self.c = c
 
-
     assert repr(A(1, 2)) == 'A(1, b=2, c=5)'
     assert pretty(A(1, 2)) == 'A(1, b=2, c=5)'
+    assert A._repr_pretty_.called
 
     assert repr(B(1, 2)) == 'B(1, 2, c=5)'
     assert pretty(B(1, 2)) == 'B(1, 2, c=5)'
+    assert B._repr_pretty_.called
 
     assert repr(C(1, 2)) == 'C(1, b=2, c=5)'
     assert pretty(C(1, 2)) == 'C(1, b=2, c=5)'
+    assert C._repr_pretty_.called
 
     assert repr(D(1, 2)) == 'D(1, 2, c=5)'
     assert pretty(D(1, 2)) == 'D(1, 2, c=5)'
+    assert D._repr_pretty_.called
 
     with pytest.raises(ValueError):
         @autorepr(positional='b')
@@ -113,6 +130,7 @@ def test_exceptions():
 
 
 def test_cycle():
+    @mock_repr_pretty
     @autorepr
     class A(object):
         def __init__(self, a=None):
@@ -122,6 +140,7 @@ def test_cycle():
     a.a = a
 
     assert pretty(a) == 'A(a=A(...))'
+    assert A._repr_pretty_.call_count == 2
 
 
 def test_reuse():
@@ -148,6 +167,7 @@ def test_reuse():
 @pytest.mark.skipif(sys.version_info < (3,2), reason='Requires Python 3.2+')
 def test_recursive_repr():
     """Test that autorepr applies the :func:`reprlib.recursive_repr` decorator."""
+    @mock_repr_pretty
     @autorepr
     class A(object):
         def __init__(self, a=None):
@@ -158,3 +178,38 @@ def test_recursive_repr():
 
     reprstr = 'A(a=...)'
     assert repr(a) == reprstr
+
+
+@pytest.mark.parametrize('include_pretty', [False, True])
+def test_include_pretty(include_pretty):
+
+    @mock_repr_pretty
+    @autorepr(include_pretty=include_pretty)
+    class A(object):
+        def __init__(self, a):
+            self.a = a
+
+    a = A(1)
+    reprstr = 'A(a=1)'
+    assert repr(a) == reprstr
+
+    if include_pretty:
+        assert pretty(a) == reprstr
+        assert A._repr_pretty_.call_count == 1
+    else:
+        # check pretty falls back to __repr__ (to make sure we didn't leave a
+        # broken _repr_pretty_ on the class)
+        assert pretty(a) == reprstr
+        assert not hasattr(A, '_repr_pretty_')
+
+
+def mock_repr_pretty(cls):
+    """Wrap cls._repr_pretty_ in a mock, if it exists."""
+    _repr_pretty_ = getattr(cls, '_repr_pretty_', None)
+
+    # Only mock it if it's there, it's up to the tests to check the mock was
+    # called.
+    if _repr_pretty_ is not None:
+        cls._repr_pretty_ = Mock(wraps=_repr_pretty_)
+
+    return cls

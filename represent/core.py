@@ -19,6 +19,9 @@ except ImportError:
 __all__ = ['ReprHelperMixin', 'autorepr']
 
 
+_DEFAULT_INCLUDE_PRETTY = True
+
+
 def autorepr(*args, **kwargs):
     """Class decorator to construct :code:`__repr__` **automatically**
     based on the arguments to ``__init__``.
@@ -55,8 +58,9 @@ def autorepr(*args, **kwargs):
     .. versionadded:: 1.5.0
     """
     cls = positional = None
+    include_pretty = _DEFAULT_INCLUDE_PRETTY
 
-    # We allow using @autorepr or @autorepr(positional=...), so check
+    # We allow using @autorepr or @autorepr(positional=..., ...), so check
     # how we were called.
 
     if args and not kwargs:
@@ -71,15 +75,19 @@ def autorepr(*args, **kwargs):
                 "'positional' argument, use a keyword.")
 
     elif not args and kwargs:
-        try:
-            positional = kwargs.pop('positional')
-        except KeyError:
-            raise TypeError(
-                "Missing required keyword-only argument: 'positional'")
+        valid_kwargs = {'positional', 'include_pretty'}
+        invalid_kwargs = kwargs.keys() - valid_kwargs
+
+        if invalid_kwargs:
+            error = 'Unexpected keyword arguments: {}'.format(invalid_kwargs)
+            raise TypeError(error)
+
+        positional = kwargs.get('positional')
+        include_pretty = kwargs.get('include_pretty', include_pretty)
 
     elif (args and kwargs) or (not args and not kwargs):
         raise TypeError(
-            "Must pass class or keyword-only argument 'positional'")
+            'Use bare @autorepr or @autorepr(...) with keyword args.')
 
     # Define the methods we'll add to the decorated class.
 
@@ -89,6 +97,19 @@ def autorepr(*args, **kwargs):
     if recursive_repr is not None:
         __repr__ = recursive_repr()(__repr__)
 
+    _repr_pretty_ = None
+    if include_pretty:
+        _repr_pretty_ = _make_repr_pretty()
+
+    if cls is not None:
+        return _autorepr_decorate(cls, repr=__repr__, repr_pretty=_repr_pretty_)
+    else:
+        return partial(
+            _autorepr_decorate, repr=__repr__, repr_pretty=_repr_pretty_,
+            positional=positional, include_pretty=include_pretty)
+
+
+def _make_repr_pretty():
     def _repr_pretty_(self, p, cycle):
         """Pretty printer for :class:`IPython.lib.pretty`"""
         cls = self.__class__
@@ -115,14 +136,7 @@ def autorepr(*args, **kwargs):
                     with p.group(len(keyword) + 1, keyword + '='):
                         p.pretty(getattr(self, keyword))
 
-    if cls is not None:
-        return _autorepr_decorate(
-            cls, positional=positional, repr=__repr__,
-            repr_pretty=_repr_pretty_)
-    elif positional is not None:
-        return partial(
-            _autorepr_decorate, positional=positional, repr=__repr__,
-            repr_pretty=_repr_pretty_)
+    return _repr_pretty_
 
 
 def _getparams(cls):
@@ -139,7 +153,8 @@ def _getparams(cls):
     return params, kwonly
 
 
-def _autorepr_decorate(cls, positional, repr, repr_pretty):
+def _autorepr_decorate(cls, repr, repr_pretty, positional=None,
+                       include_pretty=_DEFAULT_INCLUDE_PRETTY):
     params, kwonly = _getparams(cls)
 
     # Args can be opted in as positional
@@ -185,7 +200,8 @@ def _autorepr_decorate(cls, positional, repr, repr_pretty):
     cls._represent = ReprInfo(''.join(repr_fstr_parts), repr_args, repr_kw)
 
     cls.__repr__ = repr
-    cls._repr_pretty_ = repr_pretty
+    if include_pretty:
+        cls._repr_pretty_ = repr_pretty
 
     return cls
 

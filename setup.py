@@ -29,6 +29,8 @@ extras_require['test'] = {
     'pytest>=3.0.5',
 }
 
+extras_require['test:python_version<"3.3"'] = {'mock'}
+
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
