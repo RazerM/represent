@@ -140,9 +140,6 @@ def _getparams(cls):
 
 
 def _autorepr_decorate(cls, positional, repr, repr_pretty):
-    cls._repr_clsname = cls.__name__
-    cls._repr_positional = positional
-
     params, kwonly = _getparams(cls)
 
     # Args can be opted in as positional
