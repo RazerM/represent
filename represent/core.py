@@ -76,7 +76,7 @@ def autorepr(*args, **kwargs):
 
     elif not args and kwargs:
         valid_kwargs = {'positional', 'include_pretty'}
-        invalid_kwargs = kwargs.keys() - valid_kwargs
+        invalid_kwargs = set(kwargs) - valid_kwargs
 
         if invalid_kwargs:
             error = 'Unexpected keyword arguments: {}'.format(invalid_kwargs)
