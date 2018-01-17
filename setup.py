@@ -24,12 +24,12 @@ requires = ['six>=1.8.0']
 
 extras_require = dict()
 
-extras_require['test'] = {
+extras_require['test'] = [
     'ipython',
     'pytest>=3.0.5',
-}
+]
 
-extras_require['test:python_version<"3.3"'] = {'mock'}
+extras_require['test:python_version<"3.3"'] = ['mock']
 
 
 class PyTest(TestCommand):
