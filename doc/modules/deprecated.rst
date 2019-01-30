@@ -15,7 +15,3 @@ represent.deprecated
 .. automodule:: represent.deprecated
     :members:
     :show-inheritance:
-
-.. autoclass:: represent.deprecated._ReprMixinBase
-
-.. autoclass:: represent.deprecated._ReprMixin
