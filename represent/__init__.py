@@ -26,3 +26,27 @@ PrettyRepresentationHelper = _deprecated(
     'PrettyRepresentationHelper has been renamed to PrettyReprHelper.',
     DeprecationWarning
 )
+
+RepresentationMixin = _deprecated(
+    ReprMixin,
+    __name__,
+    'RepresentationMixin has been deprecated in favour of the '
+    'represent.autorepr class decorator.',
+    DeprecationWarning
+)
+
+ReprMixin = _deprecated(
+    ReprMixin,
+    __name__,
+    'ReprMixin has been deprecated in favour of the represent.autorepr '
+    'class decorator.',
+    DeprecationWarning
+)
+
+ReprMixinBase = _deprecated(
+    ReprMixinBase,
+    __name__,
+    'ReprMixinBase has been deprecated in favour of the represent.autorepr '
+    'class decorator.',
+    DeprecationWarning
+)

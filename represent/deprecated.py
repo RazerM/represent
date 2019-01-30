@@ -6,12 +6,11 @@ import inspect
 import six
 
 from .compat.contextlib import suppress
-from .utilities import deprecated
 
-__all__ = ['ReprMixinBase', 'ReprMixin', 'RepresentationMixin']
+__all__ = ['ReprMixinBase', 'ReprMixin']
 
 
-class _ReprMixinBase(object):
+class ReprMixinBase(object):
     """Mixin to construct :code:`__repr__` for named arguments **automatically**.
 
     :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
@@ -92,7 +91,7 @@ class _ReprMixinBase(object):
             cls._repr_formatstr = ''.join(repr_parts)
 
         # Pass on args for cooperative multiple inheritance.
-        super(_ReprMixinBase, self).__init__(*args, **kwargs)
+        super(ReprMixinBase, self).__init__(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__._repr_formatstr.format(self=self)
@@ -124,7 +123,7 @@ class _ReprMixinBase(object):
                         p.pretty(getattr(self, keyword))
 
 
-class _ReprMixin(_ReprMixinBase):
+class ReprMixin(ReprMixinBase):
     """Mixin to construct :code:`__repr__` for named arguments **automatically**.
 
     :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed.
@@ -156,30 +155,5 @@ class _ReprMixin(_ReprMixinBase):
 
     def __setstate__(self, d):
         positional, real_dict = d
-        _ReprMixin.__init__(self, positional)
+        ReprMixin.__init__(self, positional)
         self.__dict__.update(real_dict)
-
-
-RepresentationMixin = deprecated(
-    _ReprMixin,
-    __name__,
-    'RepresentationMixin has been deprecated in favour of the'
-    'represent.autorepr class decorator.',
-    DeprecationWarning
-)
-
-ReprMixin = deprecated(
-    _ReprMixin,
-    __name__,
-    'ReprMixin has been deprecated in favour of the represent.autorepr'
-    'class decorator.',
-    DeprecationWarning
-)
-
-ReprMixinBase = deprecated(
-    _ReprMixinBase,
-    __name__,
-    'ReprMixinBase has been deprecated in favour of the represent.autorepr'
-    'class decorator.',
-    DeprecationWarning
-)

@@ -8,6 +8,10 @@
 - `autorepr` now assigns one `namedtuple` to `cls._represent` instead of using
   three different class variables as before.
 
+### Fixed
+- Deprecation warnings were always raised instead of only when deprecated
+  names were imported.
+
 [rrr]: https://docs.python.org/3.5/library/reprlib.html#reprlib.recursive_repr
 
 ## [1.5.1] - 2016-05-29
