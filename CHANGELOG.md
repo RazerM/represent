@@ -1,5 +1,8 @@
 # Change Log
 ## [Unreleased][unreleased]
+N/A
+
+## [1.6.0] - 2019-01-30
 ### Added
 - `autorepr` and `ReprHelperMixin` now use [`reprlib.recursive_repr`][rrr] if
   available. (#3)
@@ -100,8 +103,8 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.5.1...HEAD
-[1.5.1]: https://github.com/RazerM/represent/compare/1.5.0...1.5.1
+[unreleased]: https://github.com/RazerM/represent/compare/1.6.0...HEAD
+[1.6.0]: https://github.com/RazerM/represent/compare/1.5.1...1.6.0
 [1.5.0]: https://github.com/RazerM/represent/compare/1.4.1...1.5.0
 [1.4.1]: https://github.com/RazerM/represent/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/RazerM/represent/compare/1.3.0...1.4.0
