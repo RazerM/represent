@@ -1,5 +1,5 @@
 ## Represent
-[![PyPI Version][ppi]][ppl] [![Documentation][di]][dl] [![Travis][tvi]][tvl] [![Coverage][cvi]][cvl] [![Python Version][pvi]][pvl] [![MIT License][mli]][mll]
+[![PyPI Version][ppi]][ppl] [![Documentation][di]][dl] [![CI Status][gai]][gal] [![Coverage][cvi]][cvl] [![Python Version][pvi]][pvl] [![MIT License][mli]][mll]
 
   [ppi]: https://img.shields.io/pypi/v/represent.svg?style=flat-square
   [ppl]: https://pypi.python.org/pypi/represent/
@@ -9,8 +9,8 @@
   [mll]: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE
   [di]: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
   [dl]: https://represent.readthedocs.io/en/latest/
-  [tvi]: https://img.shields.io/travis/RazerM/represent/master.svg?style=flat-square&label=travis
-  [tvl]: https://travis-ci.org/RazerM/represent
+  [gai]: https://github.com/RazerM/represent/workflows/CI/badge.svg?branch=master
+  [gal]: https://github.com/RazerM/represent/actions?workflow=CI
   [cvi]: https://img.shields.io/codecov/c/github/RazerM/represent/master.svg?style=flat-square
   [cvl]: https://codecov.io/github/RazerM/represent?branch=master
 
