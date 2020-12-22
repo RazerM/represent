@@ -2,6 +2,11 @@
 ## [Unreleased][unreleased]
 N/A
 
+## [1.6.0.post0] - 2020-12-22
+### Changed
+- Modernised packaging and ensure Python 3.8-3.9 are tested on CI. No
+  functional changes.
+
 ## [1.6.0] - 2019-01-30
 ### Added
 - `autorepr` and `ReprHelperMixin` now use [`reprlib.recursive_repr`][rrr] if
@@ -103,8 +108,10 @@ These aliases will raise deprecation warnings:
 ### Changed
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.6.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/1.6.0.post0...HEAD
+[1.6.0.post0]: https://github.com/RazerM/represent/compare/1.6.0...1.6.0.post0
 [1.6.0]: https://github.com/RazerM/represent/compare/1.5.1...1.6.0
+[1.5.1]: https://github.com/RazerM/represent/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/RazerM/represent/compare/1.4.1...1.5.0
 [1.4.1]: https://github.com/RazerM/represent/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/RazerM/represent/compare/1.3.0...1.4.0
