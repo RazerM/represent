@@ -21,14 +21,13 @@ AUTHOR, EMAIL = re.match(r'(.*) <(.*)>', AUTHOR_EMAIL).groups()
 
 requires = ['six>=1.8.0']
 
-extras_require = dict()
-
-extras_require['test'] = [
-    'ipython',
-    'pytest>=3.0.5',
-]
-
-extras_require['test:python_version<"3.3"'] = ['mock']
+extras_require = {
+    'test': [
+        'ipython',
+        'pytest>=3.0.5',
+        'mock; python_version<"3.3"',
+    ],
+}
 
 
 setup(
