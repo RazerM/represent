@@ -2,6 +2,10 @@
 
 ## [Unreleased][unreleased]
 
+N/A
+
+## [2.0.0] - 2023-12-30
+
 ### Changed
 
 - Dropped support for Python < 3.8
@@ -9,6 +13,7 @@
 ### Removed
 
 - All previously deprecated items.
+- `represent.__version__` etc. use `importlib.metadata` instead.
 
 ## [1.6.0.post0] - 2020-12-22
 
@@ -150,7 +155,8 @@ These aliases will raise deprecation warnings:
 
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/1.6.0.post0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/RazerM/represent/compare/1.6.0.post0..2.0.0
 [1.6.0.post0]: https://github.com/RazerM/represent/compare/1.6.0...1.6.0.post0
 [1.6.0]: https://github.com/RazerM/represent/compare/1.5.1...1.6.0
 [1.5.1]: https://github.com/RazerM/represent/compare/1.5.0...1.5.1
