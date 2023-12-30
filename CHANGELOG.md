@@ -1,6 +1,7 @@
 # Change Log
 ## [Unreleased][unreleased]
-N/A
+### Removed
+- All previously deprecated items.
 
 ## [1.6.0.post0] - 2020-12-22
 ### Changed

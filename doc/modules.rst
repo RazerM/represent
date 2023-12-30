@@ -7,4 +7,3 @@ Module Reference
 
     modules/core
     modules/helper
-    modules/deprecated
