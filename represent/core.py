@@ -1,11 +1,5 @@
-# code: utf-8
-from __future__ import absolute_import, print_function
-
 import inspect
-import sys
 from functools import partial
-
-import six
 
 from .helper import ReprHelper, PrettyReprHelper
 from .utilities import ReprInfo
@@ -82,7 +76,7 @@ def autorepr(*args, **kwargs):
         invalid_kwargs = set(kwargs) - valid_kwargs
 
         if invalid_kwargs:
-            error = 'Unexpected keyword arguments: {}'.format(invalid_kwargs)
+            error = f'Unexpected keyword arguments: {invalid_kwargs}'
             raise TypeError(error)
 
         positional = kwargs.get('positional')
@@ -119,7 +113,7 @@ def _make_repr_pretty():
         clsname = cls.__name__
 
         if cycle:
-            p.text('{}(...)'.format(clsname))
+            p.text(f'{clsname}(...)')
         else:
             positional_args = cls._represent.args
             keyword_args = cls._represent.kw
@@ -143,15 +137,10 @@ def _make_repr_pretty():
 
 
 def _getparams(cls):
-    if sys.version_info >= (3, 3):
-        signature = inspect.signature(cls)
-        params = list(signature.parameters)
-        kwonly = {p.name for p in signature.parameters.values()
-                  if p.kind == inspect.Parameter.KEYWORD_ONLY}
-    else:
-        argspec = inspect.getargspec(cls.__init__)
-        params = argspec.args[1:]
-        kwonly = set()
+    signature = inspect.signature(cls)
+    params = list(signature.parameters)
+    kwonly = {p.name for p in signature.parameters.values()
+              if p.kind == inspect.Parameter.KEYWORD_ONLY}
 
     return params, kwonly
 
@@ -165,7 +154,7 @@ def _autorepr_decorate(cls, repr, repr_pretty, positional=None,
         positional = []
     elif isinstance(positional, int):
         positional = params[:positional]
-    elif isinstance(positional, six.string_types):
+    elif isinstance(positional, str):
         positional = [positional]
 
     # Ensure positional args can't follow keyword args.
@@ -182,7 +171,7 @@ def _autorepr_decorate(cls, repr, repr_pretty, positional=None,
             repr_fstr_parts.append(', ')
 
         if arg in positional:
-            repr_fstr_parts.append('{{self.{0}!r}}'.format(arg))
+            repr_fstr_parts.append(f'{{self.{arg}!r}}')
             repr_args.append(arg)
 
             if arg in kwonly:
@@ -209,7 +198,7 @@ def _autorepr_decorate(cls, repr, repr_pretty, positional=None,
     return cls
 
 
-class ReprHelperMixin(object):
+class ReprHelperMixin:
     """Mixin to provide :code:`__repr__` and :code:`_repr_pretty_` for
     :py:mod:`IPython.lib.pretty` from user defined :code:`_repr_helper_`
     function.

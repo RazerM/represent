@@ -1,17 +1,11 @@
-# code: utf-8
-from __future__ import absolute_import, print_function
-
 from abc import ABCMeta, abstractmethod
-
-import six
 
 from .utilities import inherit_docstrings, Parantheses
 
 __all__ = ['ReprHelper', 'PrettyReprHelper']
 
 
-@six.add_metaclass(ABCMeta)
-class BaseReprHelper(object):
+class BaseReprHelper(metaclass=ABCMeta):
     def __init__(self, other):
         self.parantheses = Parantheses(left='(', right=')')
         self.other = other
@@ -94,7 +88,7 @@ class ReprHelper(BaseReprHelper):
     """
     def __init__(self, other):
         self.repr_parts = []
-        super(ReprHelper, self).__init__(other)
+        super().__init__(other)
 
     def positional_from_attr(self, attr_name):
         if self.keyword_started:
@@ -118,14 +112,14 @@ class ReprHelper(BaseReprHelper):
         self._ensure_comma()
         attr_name = attr_name or name
         self.repr_parts.append(
-            '{}={!r}'.format(name, getattr(self.other, attr_name)))
+            f'{name}={getattr(self.other, attr_name)!r}')
         self.iarg += 1
 
     def keyword_with_value(self, name, value, raw=False):
         self.keyword_started = True
         self._ensure_comma()
         value = value if raw else repr(value)
-        self.repr_parts.append('{}={}'.format(name, value))
+        self.repr_parts.append(f'{name}={value}')
         self.iarg += 1
 
     def _ensure_comma(self):
@@ -166,7 +160,7 @@ class PrettyReprHelper(BaseReprHelper):
     def __init__(self, other, p, cycle):
         self.p = p
         self.cycle = cycle
-        super(PrettyReprHelper, self).__init__(other)
+        super().__init__(other)
 
     def positional_from_attr(self, attr_name):
         if self.cycle:

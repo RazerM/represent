@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division
-
 import textwrap
 import sys
 
@@ -10,7 +8,7 @@ from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin
 
 
 def test_helper_methods():
-    class ContrivedExample(object):
+    class ContrivedExample:
         def __init__(self, description, radians, shape, color, miles):
             self.description = description
             self.degrees = radians * 180 / 3.141592654
@@ -45,7 +43,7 @@ def test_helper_methods():
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
 
-    class RecursionChecker(object):
+    class RecursionChecker:
         def __init__(self, a, b, c, d, e):
             self.a = a
             self.b = b
@@ -80,7 +78,7 @@ def test_helper_methods():
 
 
 def test_helper_exceptions():
-    class A(object):
+    class A:
         def __init__(self, a, b):
             self.a = a
             self.b = b
@@ -109,7 +107,7 @@ def test_helper_exceptions():
         pretty(a)
 
 
-    class B(object):
+    class B:
         def __init__(self, a, b):
             self.a = a
             self.b = b
@@ -139,7 +137,7 @@ def test_helper_exceptions():
 
 
 def test_helper_raw():
-    class A(ReprHelperMixin, object):
+    class A(ReprHelperMixin):
         def __init__(self, a, b):
             self.a = a
             self.b = b
@@ -156,7 +154,7 @@ def test_helper_raw():
 def test_helper_mixin():
     """Verify that both __repr__ and _repr_pretty_ get called."""
 
-    class ContrivedExample(ReprHelperMixin, object):
+    class ContrivedExample(ReprHelperMixin):
         def __init__(self, description, radians, shape, color, miles):
             self.description = description
             self.degrees = radians * 180 / 3.141592654
@@ -221,7 +219,7 @@ def test_helper_mixin_recursive():
 
 
 def test_helper_parantheses():
-    class A(object):
+    class A:
         def __repr__(self):
             r = ReprHelper(self)
             r.parantheses = ('<', '>')
@@ -235,8 +233,8 @@ def test_helper_parantheses():
                 r.keyword_with_value('id', hex(id(self)), raw=True)
 
     a = A()
-    assert repr(a) == 'A<id={}>'.format(hex(id(a)))
-    assert pretty(a) == 'A<id={}>'.format(hex(id(a)))
+    assert repr(a) == f'A<id={hex(id(a))}>'
+    assert pretty(a) == f'A<id={hex(id(a))}>'
 
     # Test namedtuple for parantheses property
     r = ReprHelper(a)

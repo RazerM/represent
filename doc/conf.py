@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Represent documentation build configuration file, created by
 # sphinx-quickstart on Sat Nov  8 17:29:13 2014.
@@ -74,7 +73,7 @@ VERSION = '.'.join(str(n) for n in ver_parts if isinstance(n, Number))
 
 # General information about the project.
 project = 'Represent'
-copyright = '2015, {author}'.format(author=AUTHOR)
+copyright = f'2015, {AUTHOR}'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

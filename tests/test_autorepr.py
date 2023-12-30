@@ -1,29 +1,23 @@
-from __future__ import absolute_import, division
-
 import sys
 from textwrap import dedent
+from unittest.mock import Mock
 
 import pytest
 from IPython.lib.pretty import pretty
 
 from represent import autorepr
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
-
 
 def test_standard():
     @mock_repr_pretty
     @autorepr
-    class A(object):
+    class A:
         def __init__(self):
             pass
 
     @mock_repr_pretty
     @autorepr
-    class B(object):
+    class B:
         def __init__(self, a, b, c=5):
             self.a = a
             self.b = b
@@ -42,7 +36,7 @@ def test_standard():
 def test_positional():
     @mock_repr_pretty
     @autorepr(positional=1)
-    class A(object):
+    class A:
         def __init__(self, a, b, c=5):
             self.a = a
             self.b = b
@@ -50,7 +44,7 @@ def test_positional():
 
     @mock_repr_pretty
     @autorepr(positional=2)
-    class B(object):
+    class B:
         def __init__(self, a, b, c=5):
             self.a = a
             self.b = b
@@ -58,7 +52,7 @@ def test_positional():
 
     @mock_repr_pretty
     @autorepr(positional='a')
-    class C(object):
+    class C:
         def __init__(self, a, b, c=5):
             self.a = a
             self.b = b
@@ -66,7 +60,7 @@ def test_positional():
 
     @mock_repr_pretty
     @autorepr(positional=['a', 'b'])
-    class D(object):
+    class D:
         def __init__(self, a, b, c=5):
             self.a = a
             self.b = b
@@ -90,7 +84,7 @@ def test_positional():
 
     with pytest.raises(ValueError):
         @autorepr(positional='b')
-        class E(object):
+        class E:
             def __init__(self, a, b):
                 pass
 
@@ -121,7 +115,7 @@ def test_exceptions():
     with pytest.raises(TypeError):
         autorepr()
 
-    class B(object):
+    class B:
         def __init__(self):
             pass
 
@@ -132,7 +126,7 @@ def test_exceptions():
 def test_cycle():
     @mock_repr_pretty
     @autorepr
-    class A(object):
+    class A:
         def __init__(self, a=None):
             self.a = a
 
@@ -148,7 +142,7 @@ def test_reuse():
     methods, but this assumption isn't valid in some cases.
     """
     @autorepr
-    class A(object):
+    class A:
         def __init__(self, a):
             self.a = a
 
@@ -157,7 +151,7 @@ def test_reuse():
     @autorepr
     class A(_A):
         def __init__(self, a, b):
-            super(A, self).__init__(a=a)
+            super().__init__(a=a)
             self.b = b
 
     a = A(1, 2)
@@ -169,7 +163,7 @@ def test_recursive_repr():
     """Test that autorepr applies the :func:`reprlib.recursive_repr` decorator."""
     @mock_repr_pretty
     @autorepr
-    class A(object):
+    class A:
         def __init__(self, a=None):
             self.a = a
 
@@ -185,7 +179,7 @@ def test_include_pretty(include_pretty):
 
     @mock_repr_pretty
     @autorepr(include_pretty=include_pretty)
-    class A(object):
+    class A:
         def __init__(self, a):
             self.a = a
 

@@ -1,5 +1,7 @@
 # Change Log
 ## [Unreleased][unreleased]
+### Changed
+- Dropped support for Python < 3.8
 ### Removed
 - All previously deprecated items.
 
