@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from .utilities import inherit_docstrings, Parantheses
+from .utilities import Parantheses, inherit_docstrings
 
 __all__ = ['ReprHelper', 'PrettyReprHelper']
 

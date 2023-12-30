@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from .helper import ReprHelper, PrettyReprHelper
+from .helper import PrettyReprHelper, ReprHelper
 from .utilities import ReprInfo
 
 try:

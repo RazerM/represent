@@ -1,5 +1,5 @@
-import textwrap
 import sys
+import textwrap
 
 import pytest
 from IPython.lib.pretty import pretty
