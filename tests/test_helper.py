@@ -1,7 +1,5 @@
-from __future__ import absolute_import, division
-
-import textwrap
 import sys
+import textwrap
 
 import pytest
 from IPython.lib.pretty import pretty
@@ -10,7 +8,7 @@ from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin
 
 
 def test_helper_methods():
-    class ContrivedExample(object):
+    class ContrivedExample:
         def __init__(self, description, radians, shape, color, miles):
             self.description = description
             self.degrees = radians * 180 / 3.141592654
@@ -19,11 +17,11 @@ def test_helper_methods():
             self.km = 1.60934 * miles
 
         def _repr_helper(self, r):
-            r.positional_from_attr('description')
+            r.positional_from_attr("description")
             r.positional_with_value(self.degrees * 3.141592654 / 180)
-            r.keyword_from_attr('shape')
-            r.keyword_from_attr('color', '_color')
-            r.keyword_with_value('miles', self.km / 1.60934)
+            r.keyword_from_attr("shape")
+            r.keyword_from_attr("color", "_color")
+            r.keyword_with_value("miles", self.km / 1.60934)
 
         def __repr__(self):
             r = ReprHelper(self)
@@ -34,9 +32,11 @@ def test_helper_methods():
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
 
-    ce = ContrivedExample('does something', 0.345, 'square', 'red', 22)
-    assert repr(ce) == ("ContrivedExample('does something', 0.345, "
-                        "shape='square', color='red', miles=22.0)")
+    ce = ContrivedExample("does something", 0.345, "square", "red", 22)
+    assert repr(ce) == (
+        "ContrivedExample('does something', 0.345, "
+        "shape='square', color='red', miles=22.0)"
+    )
     prettystr = """
     ContrivedExample('does something',
                      0.345,
@@ -45,7 +45,7 @@ def test_helper_methods():
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
 
-    class RecursionChecker(object):
+    class RecursionChecker:
         def __init__(self, a, b, c, d, e):
             self.a = a
             self.b = b
@@ -54,11 +54,11 @@ def test_helper_methods():
             self.e = e
 
         def _repr_helper(self, r):
-            r.positional_from_attr('a')
+            r.positional_from_attr("a")
             r.positional_with_value(self.b)
-            r.keyword_from_attr('c')
-            r.keyword_from_attr('d', '_d')
-            r.keyword_with_value('e', self.e)
+            r.keyword_from_attr("c")
+            r.keyword_from_attr("d", "_d")
+            r.keyword_with_value("e", self.e)
 
         def _repr_pretty_(self, p, cycle):
             with PrettyReprHelper(self, p, cycle) as r:
@@ -80,7 +80,7 @@ def test_helper_methods():
 
 
 def test_helper_exceptions():
-    class A(object):
+    class A:
         def __init__(self, a, b):
             self.a = a
             self.b = b
@@ -88,8 +88,8 @@ def test_helper_exceptions():
         def _repr_helper(self, r):
             # Try to make a repr where positional arg follows keyword arg.
             # Will raise ValueError when repr/pretty is called.
-            r.keyword_from_attr('a')
-            r.positional_from_attr('b')
+            r.keyword_from_attr("a")
+            r.positional_from_attr("b")
 
         def __repr__(self):
             r = ReprHelper(self)
@@ -108,8 +108,7 @@ def test_helper_exceptions():
     with pytest.raises(ValueError):
         pretty(a)
 
-
-    class B(object):
+    class B:
         def __init__(self, a, b):
             self.a = a
             self.b = b
@@ -117,7 +116,7 @@ def test_helper_exceptions():
         def _repr_helper(self, r):
             # Try to make a repr where positional arg follows keyword arg.
             # Will raise ValueError when repr/pretty is called.
-            r.keyword_from_attr('a')
+            r.keyword_from_attr("a")
             r.positional_with_value(self.b)
 
         def __repr__(self):
@@ -139,24 +138,24 @@ def test_helper_exceptions():
 
 
 def test_helper_raw():
-    class A(ReprHelperMixin, object):
+    class A(ReprHelperMixin):
         def __init__(self, a, b):
             self.a = a
             self.b = b
 
         def _repr_helper_(self, r):
             r.positional_with_value(self.a, raw=True)
-            r.keyword_with_value('b', self.b, raw=True)
+            r.keyword_with_value("b", self.b, raw=True)
 
-    a = A('a', 'b')
-    assert repr(a) == 'A(a, b=b)'
-    assert pretty(a) == 'A(a, b=b)'
+    a = A("a", "b")
+    assert repr(a) == "A(a, b=b)"
+    assert pretty(a) == "A(a, b=b)"
 
 
 def test_helper_mixin():
     """Verify that both __repr__ and _repr_pretty_ get called."""
 
-    class ContrivedExample(ReprHelperMixin, object):
+    class ContrivedExample(ReprHelperMixin):
         def __init__(self, description, radians, shape, color, miles):
             self.description = description
             self.degrees = radians * 180 / 3.141592654
@@ -165,15 +164,17 @@ def test_helper_mixin():
             self.km = 1.60934 * miles
 
         def _repr_helper_(self, r):
-            r.positional_from_attr('description')
+            r.positional_from_attr("description")
             r.positional_with_value(self.degrees * 3.141592654 / 180)
-            r.keyword_from_attr('shape')
-            r.keyword_from_attr('color', '_color')
-            r.keyword_with_value('miles', self.km / 1.60934)
+            r.keyword_from_attr("shape")
+            r.keyword_from_attr("color", "_color")
+            r.keyword_with_value("miles", self.km / 1.60934)
 
-    ce = ContrivedExample('does something', 0.345, 'square', 'red', 22)
-    assert repr(ce) == ("ContrivedExample('does something', 0.345, "
-                        "shape='square', color='red', miles=22.0)")
+    ce = ContrivedExample("does something", 0.345, "square", "red", 22)
+    assert repr(ce) == (
+        "ContrivedExample('does something', 0.345, "
+        "shape='square', color='red', miles=22.0)"
+    )
     prettystr = """
     ContrivedExample('does something',
                      0.345,
@@ -184,15 +185,17 @@ def test_helper_mixin():
 
     class ContrivedExampleKeywords(ContrivedExample):
         def _repr_helper_(self, r):
-            r.positional_from_attr(attr_name='description')
+            r.positional_from_attr(attr_name="description")
             r.positional_with_value(value=self.degrees * 3.141592654 / 180)
-            r.keyword_from_attr(name='shape')
-            r.keyword_from_attr(name='color', attr_name='_color')
-            r.keyword_with_value(name='miles', value=self.km / 1.60934)
+            r.keyword_from_attr(name="shape")
+            r.keyword_from_attr(name="color", attr_name="_color")
+            r.keyword_with_value(name="miles", value=self.km / 1.60934)
 
-    ce = ContrivedExampleKeywords('does something', 0.345, 'square', 'red', 22)
-    assert repr(ce) == ("ContrivedExampleKeywords('does something', 0.345, "
-                        "shape='square', color='red', miles=22.0)")
+    ce = ContrivedExampleKeywords("does something", 0.345, "square", "red", 22)
+    assert repr(ce) == (
+        "ContrivedExampleKeywords('does something', 0.345, "
+        "shape='square', color='red', miles=22.0)"
+    )
     prettystr = """
     ContrivedExampleKeywords('does something',
                              0.345,
@@ -202,7 +205,7 @@ def test_helper_mixin():
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
 
 
-@pytest.mark.skipif(sys.version_info < (3,2), reason='Requires Python 3.2+')
+@pytest.mark.skipif(sys.version_info < (3, 2), reason="Requires Python 3.2+")
 def test_helper_mixin_recursive():
     """Test that the mixin applies the :func:`reprlib.recursive_repr` decorator."""
 
@@ -211,35 +214,35 @@ def test_helper_mixin_recursive():
             self.a = a
 
         def _repr_helper_(self, r):
-            r.keyword_from_attr('a')
+            r.keyword_from_attr("a")
 
     a = A()
     a.a = a
 
-    reprstr = 'A(a=...)'
+    reprstr = "A(a=...)"
     assert repr(a) == reprstr
 
 
 def test_helper_parantheses():
-    class A(object):
+    class A:
         def __repr__(self):
             r = ReprHelper(self)
-            r.parantheses = ('<', '>')
-            r.keyword_with_value('id', hex(id(self)), raw=True)
+            r.parantheses = ("<", ">")
+            r.keyword_with_value("id", hex(id(self)), raw=True)
             return str(r)
 
         def _repr_pretty_(self, p, cycle):
             r = PrettyReprHelper(self, p, cycle)
-            r.parantheses = ('<', '>')
+            r.parantheses = ("<", ">")
             with r:
-                r.keyword_with_value('id', hex(id(self)), raw=True)
+                r.keyword_with_value("id", hex(id(self)), raw=True)
 
     a = A()
-    assert repr(a) == 'A<id={}>'.format(hex(id(a)))
-    assert pretty(a) == 'A<id={}>'.format(hex(id(a)))
+    assert repr(a) == f"A<id={hex(id(a))}>"
+    assert pretty(a) == f"A<id={hex(id(a))}>"
 
     # Test namedtuple for parantheses property
     r = ReprHelper(a)
     assert repr(r.parantheses) == "Parantheses(left='(', right=')')"
-    r.parantheses = ('<', '>')
+    r.parantheses = ("<", ">")
     assert repr(r.parantheses) == "Parantheses(left='<', right='>')"
