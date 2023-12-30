@@ -1,14 +1,9 @@
 import inspect
 from functools import partial
+from reprlib import recursive_repr
 
 from .helper import PrettyReprHelper, ReprHelper
 from .utilities import ReprInfo
-
-try:
-    from reprlib import recursive_repr
-except ImportError:
-    recursive_repr = None
-
 
 __all__ = ["ReprHelperMixin", "autorepr"]
 
@@ -88,11 +83,9 @@ def autorepr(*args, **kwargs):
 
     # Define the methods we'll add to the decorated class.
 
+    @recursive_repr()
     def __repr__(self):
         return self.__class__._represent.fstr.format(self=self)
-
-    if recursive_repr is not None:
-        __repr__ = recursive_repr()(__repr__)
 
     _repr_pretty_ = None
     if include_pretty:
@@ -228,13 +221,11 @@ class ReprHelperMixin:
 
     __slots__ = ()
 
+    @recursive_repr()
     def __repr__(self):
         r = ReprHelper(self)
         self._repr_helper_(r)
         return str(r)
-
-    if recursive_repr is not None:
-        __repr__ = recursive_repr()(__repr__)
 
     def _repr_pretty_(self, p, cycle):
         with PrettyReprHelper(self, p, cycle) as r:
