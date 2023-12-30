@@ -2,12 +2,12 @@ from abc import ABCMeta, abstractmethod
 
 from .utilities import Parantheses, inherit_docstrings
 
-__all__ = ['ReprHelper', 'PrettyReprHelper']
+__all__ = ["ReprHelper", "PrettyReprHelper"]
 
 
 class BaseReprHelper(metaclass=ABCMeta):
     def __init__(self, other):
-        self.parantheses = Parantheses(left='(', right=')')
+        self.parantheses = Parantheses(left="(", right=")")
         self.other = other
         self.other_cls = other.__class__
         self.iarg = 0
@@ -86,22 +86,21 @@ class ReprHelper(BaseReprHelper):
                 r.keyword_from_attr('name')
                 return str(r)
     """
+
     def __init__(self, other):
         self.repr_parts = []
         super().__init__(other)
 
     def positional_from_attr(self, attr_name):
         if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
+            raise ValueError("positional arguments cannot " "follow keyword arguments")
         self._ensure_comma()
         self.repr_parts.append(repr(getattr(self.other, attr_name)))
         self.iarg += 1
 
     def positional_with_value(self, value, raw=False):
         if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
+            raise ValueError("positional arguments cannot " "follow keyword arguments")
         self._ensure_comma()
         value = value if raw else repr(value)
         self.repr_parts.append(value)
@@ -111,26 +110,25 @@ class ReprHelper(BaseReprHelper):
         self.keyword_started = True
         self._ensure_comma()
         attr_name = attr_name or name
-        self.repr_parts.append(
-            f'{name}={getattr(self.other, attr_name)!r}')
+        self.repr_parts.append(f"{name}={getattr(self.other, attr_name)!r}")
         self.iarg += 1
 
     def keyword_with_value(self, name, value, raw=False):
         self.keyword_started = True
         self._ensure_comma()
         value = value if raw else repr(value)
-        self.repr_parts.append(f'{name}={value}')
+        self.repr_parts.append(f"{name}={value}")
         self.iarg += 1
 
     def _ensure_comma(self):
         if self.iarg:
-            self.repr_parts.append(', ')
+            self.repr_parts.append(", ")
 
     def __str__(self):
         beginning = [self.other_cls.__name__, self.parantheses.left]
         end = [self.parantheses.right]
         all_parts = beginning + self.repr_parts + end
-        return ''.join(all_parts)
+        return "".join(all_parts)
 
 
 class PrettyReprHelper(BaseReprHelper):
@@ -157,6 +155,7 @@ class PrettyReprHelper(BaseReprHelper):
                 with r:
                     r.keyword_from_attr('name')
     """
+
     def __init__(self, other, p, cycle):
         self.p = p
         self.cycle = cycle
@@ -167,8 +166,7 @@ class PrettyReprHelper(BaseReprHelper):
             return
 
         if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
+            raise ValueError("positional arguments cannot " "follow keyword arguments")
         self._ensure_comma()
         self.p.pretty(getattr(self.other, attr_name))
         self.iarg += 1
@@ -178,8 +176,7 @@ class PrettyReprHelper(BaseReprHelper):
             return
 
         if self.keyword_started:
-            raise ValueError('positional arguments cannot '
-                             'follow keyword arguments')
+            raise ValueError("positional arguments cannot " "follow keyword arguments")
         self._ensure_comma()
         if raw:
             self.p.text(str(value))
@@ -194,7 +191,7 @@ class PrettyReprHelper(BaseReprHelper):
         self.keyword_started = True
         self._ensure_comma()
         attr_name = attr_name or name
-        with self.p.group(len(name) + 1, name + '='):
+        with self.p.group(len(name) + 1, name + "="):
             self.p.pretty(getattr(self.other, attr_name))
         self.iarg += 1
 
@@ -204,7 +201,7 @@ class PrettyReprHelper(BaseReprHelper):
 
         self.keyword_started = True
         self._ensure_comma()
-        with self.p.group(len(name) + 1, name + '='):
+        with self.p.group(len(name) + 1, name + "="):
             if raw:
                 self.p.text(str(value))
             else:
@@ -213,7 +210,7 @@ class PrettyReprHelper(BaseReprHelper):
 
     def _ensure_comma(self):
         if self.iarg:
-            self.p.text(',')
+            self.p.text(",")
             self.p.breakable()
 
     def __enter__(self):
@@ -244,6 +241,6 @@ class PrettyReprHelper(BaseReprHelper):
         This is normally called by using as a context manager.
         """
         if self.cycle:
-            self.p.text('...')
+            self.p.text("...")
         clsname = self.other_cls.__name__
         self.p.end_group(len(clsname) + 1, self.parantheses.right)
