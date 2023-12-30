@@ -32,6 +32,11 @@ test = [
     "ipython",
     "pytest",
 ]
+docstest = [
+    "parver",
+    "sphinx",
+    "furo",
+]
 
 [tool.setuptools]
 package-dir = { "" = "src" }

@@ -1,7 +1,7 @@
 ************
 Installation
 ************
-	
+
 The recommended installation method is using ``pip``.
 
 pip

@@ -82,4 +82,3 @@ To use the declarative style without using
 :class:`~represent.core.ReprHelperMixin`, refer to the documentation for
 :class:`~represent.helper.ReprHelper` and
 :class:`~represent.helper.PrettyReprHelper`.
-
