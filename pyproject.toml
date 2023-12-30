@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Represent"
-version = "1.6.0.post0"
+version = "2.0"
 description = "Create __repr__ automatically or declaratively."
 readme = "README.md"
 requires-python = ">=3.8"
