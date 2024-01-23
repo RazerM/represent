@@ -2,6 +2,10 @@
 
 ## [Unreleased][unreleased]
 
+N/A
+
+## [2.1.0] - 2024-01-23
+
 ### Added
 
 - Support for `rich.pretty` to `autorepr` and `ReprHelperMixin`.
@@ -158,7 +162,8 @@ These aliases will raise deprecation warnings:
 
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/2.0.0...HEAD
+[unreleased]: https://github.com/RazerM/represent/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/RazerM/represent/compare/2.0.0..2.1.0
 [2.0.0]: https://github.com/RazerM/represent/compare/1.6.0.post0..2.0.0
 [1.6.0.post0]: https://github.com/RazerM/represent/compare/1.6.0...1.6.0.post0
 [1.6.0]: https://github.com/RazerM/represent/compare/1.5.1...1.6.0
