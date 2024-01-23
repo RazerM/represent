@@ -31,6 +31,7 @@ Documentation = "https://represent.readthedocs.io"
 test = [
     "ipython",
     "pytest",
+    "rich",
 ]
 docstest = [
     "parver",
@@ -54,3 +55,6 @@ source = ["represent", ".tox/*/lib/python*/site-packages/represent"]
 [tool.coverage.report]
 precision = 1
 exclude_lines = ["pragma: no cover", "pass"]
+
+[tool.isort]
+profile = "black"

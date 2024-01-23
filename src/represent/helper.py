@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from .utilities import Parantheses, inherit_docstrings
 
-__all__ = ["ReprHelper", "PrettyReprHelper"]
+__all__ = ["ReprHelper", "PrettyReprHelper", "RichReprHelper"]
 
 
 class BaseReprHelper(metaclass=ABCMeta):
@@ -244,3 +244,56 @@ class PrettyReprHelper(BaseReprHelper):
             self.p.text("...")
         clsname = self.other_cls.__name__
         self.p.end_group(len(clsname) + 1, self.parantheses.right)
+
+
+class RawReprWrapper:
+    """rich.pretty calls repr for us, so to support raw=True we need a wrapper
+    object which returns str() when repr() is called.
+    """
+
+    def __init__(self, o: object):
+        self._object = o
+
+    def __repr__(self):
+        return str(self._object)
+
+
+class RichReprHelper(BaseReprHelper):
+    """Help manual construction of :code:`__rich_repr__` for
+    :py:mod:`rich.pretty`.
+
+    It should be used as follows:
+
+    .. code-block:: python
+
+        def __rich_repr__(self)
+            r = RichReprHelper(self)
+            r.keyword_from_attr('name')
+            yield from r
+    """
+
+    def __init__(self, other):
+        self._tuples = []
+        super().__init__(other)
+
+    def positional_from_attr(self, attr_name):
+        if self.keyword_started:
+            raise ValueError("positional arguments cannot follow keyword arguments")
+        self._tuples.append((None, getattr(self.other, attr_name)))
+
+    def positional_with_value(self, value, raw=False):
+        if self.keyword_started:
+            raise ValueError("positional arguments cannot follow keyword arguments")
+        self._tuples.append((None, RawReprWrapper(value) if raw else value))
+
+    def keyword_from_attr(self, name, attr_name=None):
+        self.keyword_started = True
+        attr_name = attr_name or name
+        self._tuples.append((name, getattr(self.other, attr_name)))
+
+    def keyword_with_value(self, name, value, raw=False):
+        self.keyword_started = True
+        return self._tuples.append((name, RawReprWrapper(value) if raw else value))
+
+    def __iter__(self):
+        return iter(self._tuples)
