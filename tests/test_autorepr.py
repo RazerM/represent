@@ -1,4 +1,3 @@
-import sys
 from textwrap import dedent
 from unittest.mock import Mock
 
@@ -89,19 +88,13 @@ def test_positional():
                 pass
 
 
-@pytest.mark.skipif(sys.version_info < (3,), reason="Requires Python 3")
 def test_kwonly():
-    code = dedent(
-        """
-        with pytest.raises(ValueError):
-            @autorepr(positional='a')
-            class A:
-                def __init__(self, *, a):
-                    pass
-    """
-    )
+    with pytest.raises(ValueError):
 
-    exec(code)
+        @autorepr(positional="a")
+        class A:
+            def __init__(self, *, a):
+                pass
 
 
 def test_exceptions():
@@ -161,7 +154,6 @@ def test_reuse():
     assert repr(a) == "A(a=1, b=2)"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 2), reason="Requires Python 3.2+")
 def test_recursive_repr():
     """Test that autorepr applies the :func:`reprlib.recursive_repr` decorator."""
 
