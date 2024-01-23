@@ -1,4 +1,3 @@
-import sys
 import textwrap
 
 import pytest
@@ -205,7 +204,6 @@ def test_helper_mixin():
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 2), reason="Requires Python 3.2+")
 def test_helper_mixin_recursive():
     """Test that the mixin applies the :func:`reprlib.recursive_repr` decorator."""
 
