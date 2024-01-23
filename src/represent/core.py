@@ -2,26 +2,31 @@ import inspect
 from functools import partial
 from reprlib import recursive_repr
 
-from .helper import PrettyReprHelper, ReprHelper
+from .helper import PrettyReprHelper, ReprHelper, RichReprHelper
 from .utilities import ReprInfo
 
 __all__ = ["ReprHelperMixin", "autorepr"]
 
 
 _DEFAULT_INCLUDE_PRETTY = True
+_DEFAULT_INCLUDE_RICH = True
 
 
 def autorepr(*args, **kwargs):
     """Class decorator to construct :code:`__repr__` **automatically**
     based on the arguments to ``__init__``.
 
-    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is also constructed,
+    :code:`_repr_pretty_` for :py:mod:`IPython.lib.pretty` is constructed
     unless `include_pretty=False`.
+
+    :code:`__rich_repr__` for :py:mod:`rich.pretty` is constructed
+    unless `include_rich=False`.
 
     :param positional: Mark arguments as positional by number, or a list of
         argument names.
     :param include_pretty: Add a ``_repr_pretty_`` to the class (defaults to
         True).
+    :param include_rich: Add a ``__rich_repr__`` to the class (defaults to True).
 
     Example:
 
@@ -51,6 +56,7 @@ def autorepr(*args, **kwargs):
     """
     cls = positional = None
     include_pretty = _DEFAULT_INCLUDE_PRETTY
+    include_rich = _DEFAULT_INCLUDE_RICH
 
     # We allow using @autorepr or @autorepr(positional=..., ...), so check
     # how we were called.
@@ -68,7 +74,7 @@ def autorepr(*args, **kwargs):
             )
 
     elif not args and kwargs:
-        valid_kwargs = {"positional", "include_pretty"}
+        valid_kwargs = {"positional", "include_pretty", "include_rich"}
         invalid_kwargs = set(kwargs) - valid_kwargs
 
         if invalid_kwargs:
@@ -77,6 +83,7 @@ def autorepr(*args, **kwargs):
 
         positional = kwargs.get("positional")
         include_pretty = kwargs.get("include_pretty", include_pretty)
+        include_rich = kwargs.get("include_rich", include_rich)
 
     elif (args and kwargs) or (not args and not kwargs):
         raise TypeError("Use bare @autorepr or @autorepr(...) with keyword args.")
@@ -87,19 +94,25 @@ def autorepr(*args, **kwargs):
     def __repr__(self):
         return self.__class__._represent.fstr.format(self=self)
 
-    _repr_pretty_ = None
+    repr_pretty = rich_repr = None
     if include_pretty:
-        _repr_pretty_ = _make_repr_pretty()
+        repr_pretty = _make_repr_pretty()
+    if include_rich:
+        rich_repr = _make_rich_repr()
 
     if cls is not None:
-        return _autorepr_decorate(cls, repr=__repr__, repr_pretty=_repr_pretty_)
+        return _autorepr_decorate(
+            cls, repr=__repr__, repr_pretty=repr_pretty, rich_repr=rich_repr
+        )
     else:
         return partial(
             _autorepr_decorate,
             repr=__repr__,
-            repr_pretty=_repr_pretty_,
+            repr_pretty=repr_pretty,
+            rich_repr=rich_repr,
             positional=positional,
             include_pretty=include_pretty,
+            include_rich=include_rich,
         )
 
 
@@ -132,6 +145,23 @@ def _make_repr_pretty():
     return _repr_pretty_
 
 
+def _make_rich_repr():
+    def __rich_repr__(self):
+        """Pretty printer for :mod:`rich.pretty`"""
+        cls = self.__class__
+
+        positional_args = cls._represent.args
+        keyword_args = cls._represent.kw
+
+        for positional in positional_args:
+            yield getattr(self, positional)
+
+        for keyword in keyword_args:
+            yield keyword, getattr(self, keyword)
+
+    return __rich_repr__
+
+
 def _getparams(cls):
     signature = inspect.signature(cls)
     params = list(signature.parameters)
@@ -145,7 +175,13 @@ def _getparams(cls):
 
 
 def _autorepr_decorate(
-    cls, repr, repr_pretty, positional=None, include_pretty=_DEFAULT_INCLUDE_PRETTY
+    cls,
+    repr,
+    repr_pretty,
+    rich_repr,
+    positional=None,
+    include_pretty=_DEFAULT_INCLUDE_PRETTY,
+    include_rich=_DEFAULT_INCLUDE_RICH,
 ):
     params, kwonly = _getparams(cls)
 
@@ -194,6 +230,8 @@ def _autorepr_decorate(
     cls.__repr__ = repr
     if include_pretty:
         cls._repr_pretty_ = repr_pretty
+    if include_rich:
+        cls.__rich_repr__ = rich_repr
 
     return cls
 
@@ -228,3 +266,8 @@ class ReprHelperMixin:
     def _repr_pretty_(self, p, cycle):
         with PrettyReprHelper(self, p, cycle) as r:
             self._repr_helper_(r)
+
+    def __rich_repr__(self):
+        r = RichReprHelper(self)
+        self._repr_helper_(r)
+        yield from r

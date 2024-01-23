@@ -2,7 +2,10 @@
 
 ## [Unreleased][unreleased]
 
-N/A
+### Added
+
+- Support for `rich.pretty` to `autorepr` and `ReprHelperMixin`.
+- `RichReprHelper`.
 
 ## [2.0.0] - 2023-12-30
 

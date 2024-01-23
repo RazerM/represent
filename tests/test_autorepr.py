@@ -1,20 +1,39 @@
+from contextlib import contextmanager
+from functools import partial
 from textwrap import dedent
-from unittest.mock import Mock
+from types import MethodType
+from unittest.mock import Mock, patch
 
 import pytest
 from IPython.lib.pretty import pretty
+from rich.pretty import pretty_repr
 
 from represent import autorepr
 
 
+class WrappedMethod:
+    def __init__(self, method):
+        self.mock = Mock(method, wraps=method)
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self.mock
+        return partial(self.mock, instance)
+
+
+@contextmanager
+def spy_on_method(target, attribute):
+    wrapped = WrappedMethod(getattr(target, attribute))
+    with patch.object(target, attribute, wrapped):
+        yield wrapped.mock
+
+
 def test_standard():
-    @mock_repr_pretty
     @autorepr
     class A:
         def __init__(self):
             pass
 
-    @mock_repr_pretty
     @autorepr
     class B:
         def __init__(self, a, b, c=5):
@@ -23,16 +42,27 @@ def test_standard():
             self.c = c
 
     assert repr(A()) == "A()"
-    assert pretty(A()) == "A()"
-    assert A._repr_pretty_.called
+
+    with spy_on_method(A, "_repr_pretty_"):
+        assert pretty(A()) == "A()"
+        assert A._repr_pretty_.called
+
+    with spy_on_method(A, "__rich_repr__"):
+        assert pretty_repr(A()) == "A()"
+        assert A.__rich_repr__.called
 
     assert repr(B(1, 2)) == "B(a=1, b=2, c=5)"
-    assert pretty(B(1, 2)) == "B(a=1, b=2, c=5)"
-    assert B._repr_pretty_.called
+
+    with spy_on_method(B, "_repr_pretty_"):
+        assert pretty(B(1, 2)) == "B(a=1, b=2, c=5)"
+        assert B._repr_pretty_.called
+
+    with spy_on_method(B, "__rich_repr__"):
+        assert pretty_repr(B(1, 2)) == "B(a=1, b=2, c=5)"
+        assert B.__rich_repr__.called
 
 
 def test_positional():
-    @mock_repr_pretty
     @autorepr(positional=1)
     class A:
         def __init__(self, a, b, c=5):
@@ -40,7 +70,6 @@ def test_positional():
             self.b = b
             self.c = c
 
-    @mock_repr_pretty
     @autorepr(positional=2)
     class B:
         def __init__(self, a, b, c=5):
@@ -48,7 +77,6 @@ def test_positional():
             self.b = b
             self.c = c
 
-    @mock_repr_pretty
     @autorepr(positional="a")
     class C:
         def __init__(self, a, b, c=5):
@@ -56,7 +84,6 @@ def test_positional():
             self.b = b
             self.c = c
 
-    @mock_repr_pretty
     @autorepr(positional=["a", "b"])
     class D:
         def __init__(self, a, b, c=5):
@@ -65,20 +92,44 @@ def test_positional():
             self.c = c
 
     assert repr(A(1, 2)) == "A(1, b=2, c=5)"
-    assert pretty(A(1, 2)) == "A(1, b=2, c=5)"
-    assert A._repr_pretty_.called
+
+    with spy_on_method(A, "_repr_pretty_"):
+        assert pretty(A(1, 2)) == "A(1, b=2, c=5)"
+        assert A._repr_pretty_.called
+
+    with spy_on_method(A, "__rich_repr__"):
+        assert pretty_repr(A(1, 2)) == "A(1, b=2, c=5)"
+        assert A.__rich_repr__.called
 
     assert repr(B(1, 2)) == "B(1, 2, c=5)"
-    assert pretty(B(1, 2)) == "B(1, 2, c=5)"
-    assert B._repr_pretty_.called
+
+    with spy_on_method(B, "_repr_pretty_"):
+        assert pretty(B(1, 2)) == "B(1, 2, c=5)"
+        assert B._repr_pretty_.called
+
+    with spy_on_method(B, "__rich_repr__"):
+        assert pretty_repr(B(1, 2)) == "B(1, 2, c=5)"
+        assert B.__rich_repr__.called
 
     assert repr(C(1, 2)) == "C(1, b=2, c=5)"
-    assert pretty(C(1, 2)) == "C(1, b=2, c=5)"
-    assert C._repr_pretty_.called
+
+    with spy_on_method(C, "_repr_pretty_"):
+        assert pretty(C(1, 2)) == "C(1, b=2, c=5)"
+        assert C._repr_pretty_.called
+
+    with spy_on_method(C, "__rich_repr__"):
+        assert pretty_repr(C(1, 2)) == "C(1, b=2, c=5)"
+        assert C.__rich_repr__.called
 
     assert repr(D(1, 2)) == "D(1, 2, c=5)"
-    assert pretty(D(1, 2)) == "D(1, 2, c=5)"
-    assert D._repr_pretty_.called
+
+    with spy_on_method(D, "_repr_pretty_"):
+        assert pretty(D(1, 2)) == "D(1, 2, c=5)"
+        assert D._repr_pretty_.called
+
+    with spy_on_method(D, "__rich_repr__"):
+        assert pretty_repr(D(1, 2)) == "D(1, 2, c=5)"
+        assert D.__rich_repr__.called
 
     with pytest.raises(ValueError):
 
@@ -119,7 +170,6 @@ def test_exceptions():
 
 
 def test_cycle():
-    @mock_repr_pretty
     @autorepr
     class A:
         def __init__(self, a=None):
@@ -128,8 +178,15 @@ def test_cycle():
     a = A()
     a.a = a
 
-    assert pretty(a) == "A(a=A(...))"
-    assert A._repr_pretty_.call_count == 2
+    assert repr(a) == "A(a=...)"
+
+    with spy_on_method(A, "_repr_pretty_"):
+        assert pretty(a) == "A(a=A(...))"
+        assert A._repr_pretty_.call_count == 2
+
+    with spy_on_method(A, "__rich_repr__"):
+        assert pretty_repr(a) == "A(a=...)"
+        assert A.__rich_repr__.call_count == 1
 
 
 def test_reuse():
@@ -157,7 +214,6 @@ def test_reuse():
 def test_recursive_repr():
     """Test that autorepr applies the :func:`reprlib.recursive_repr` decorator."""
 
-    @mock_repr_pretty
     @autorepr
     class A:
         def __init__(self, a=None):
@@ -172,7 +228,6 @@ def test_recursive_repr():
 
 @pytest.mark.parametrize("include_pretty", [False, True])
 def test_include_pretty(include_pretty):
-    @mock_repr_pretty
     @autorepr(include_pretty=include_pretty)
     class A:
         def __init__(self, a):
@@ -183,8 +238,9 @@ def test_include_pretty(include_pretty):
     assert repr(a) == reprstr
 
     if include_pretty:
-        assert pretty(a) == reprstr
-        assert A._repr_pretty_.call_count == 1
+        with spy_on_method(A, "_repr_pretty_"):
+            assert pretty(a) == reprstr
+            assert A._repr_pretty_.call_count == 1
     else:
         # check pretty falls back to __repr__ (to make sure we didn't leave a
         # broken _repr_pretty_ on the class)
@@ -192,13 +248,23 @@ def test_include_pretty(include_pretty):
         assert not hasattr(A, "_repr_pretty_")
 
 
-def mock_repr_pretty(cls):
-    """Wrap cls._repr_pretty_ in a mock, if it exists."""
-    _repr_pretty_ = getattr(cls, "_repr_pretty_", None)
+@pytest.mark.parametrize("include_rich", [False, True])
+def test_include_rich(include_rich):
+    @autorepr(include_rich=include_rich)
+    class A:
+        def __init__(self, a):
+            self.a = a
 
-    # Only mock it if it's there, it's up to the tests to check the mock was
-    # called.
-    if _repr_pretty_ is not None:
-        cls._repr_pretty_ = Mock(wraps=_repr_pretty_)
+    a = A(1)
+    reprstr = "A(a=1)"
+    assert repr(a) == reprstr
 
-    return cls
+    if include_rich:
+        with spy_on_method(A, "__rich_repr__"):
+            assert pretty_repr(a) == reprstr
+            assert A.__rich_repr__.call_count == 1
+    else:
+        # check rich falls back to __repr__ (to make sure we didn't leave a
+        # broken _repr_pretty_ on the class)
+        assert pretty_repr(a) == reprstr
+        assert not hasattr(A, "__rich_repr__")

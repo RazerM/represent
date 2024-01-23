@@ -35,7 +35,8 @@ Pretty Printer
 --------------
 
 :func:`~represent.core.autorepr` also provides a
-:code:`_repr_pretty_` method for :mod:`IPython.lib.pretty`.
+:code:`_repr_pretty_` method for :mod:`IPython.lib.pretty` and a
+:code:`__rich_repr__` method for :mod:`rich.pretty`.
 
 Therefore, with the simple example above, we can pretty print:
 
@@ -52,6 +53,21 @@ Therefore, with the simple example above, we can pretty print:
               color='red',
               width=15,
               height=4.5)
+
+.. code:: python
+
+    from rich.pretty import pprint
+
+    pprint(rect)
+
+.. code-block:: none
+
+    Rectangle(
+        name='Something really long to force pretty printing line break',
+        color='red',
+        width=15,
+        height=4.5
+    )
 
 Positional Arguments
 --------------------

@@ -9,9 +9,10 @@ Helper Mixin
 If you cannot use, or prefer not to use :class:`~represent.core.ReprMixin`,
 there is an alternative declarative syntax.
 
-:class:`~represent.core.ReprHelperMixin` provides ``__repr__`` and
-``_repr_pretty_`` (for :mod:`IPython.lib.pretty`), both of which look for a
-user defined function called ``_repr_helper_``.
+:class:`~represent.core.ReprHelperMixin` provides ``__repr__``,
+``_repr_pretty_`` (for :mod:`IPython.lib.pretty`), and ``__rich_repr__`` (for
+:mod:`rich.pretty`), all of which use a user defined function called
+``_repr_helper_``.
 
 All possible method calls on the passed object `r` are shown here:
 
@@ -80,5 +81,6 @@ Manual Helpers
 
 To use the declarative style without using
 :class:`~represent.core.ReprHelperMixin`, refer to the documentation for
-:class:`~represent.helper.ReprHelper` and
-:class:`~represent.helper.PrettyReprHelper`.
+:class:`~represent.helper.ReprHelper`,
+:class:`~represent.helper.PrettyReprHelper`, and
+:class:`~represent.helper.RichReprHelper`.

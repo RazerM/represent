@@ -2,8 +2,9 @@ import textwrap
 
 import pytest
 from IPython.lib.pretty import pretty
+from rich.pretty import pretty_repr
 
-from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin
+from represent import PrettyReprHelper, ReprHelper, ReprHelperMixin, RichReprHelper
 
 
 def test_helper_methods():
@@ -31,6 +32,11 @@ def test_helper_methods():
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
 
+        def __rich_repr__(self):
+            r = RichReprHelper(self)
+            self._repr_helper(r)
+            yield from r
+
     ce = ContrivedExample("does something", 0.345, "square", "red", 22)
     assert repr(ce) == (
         "ContrivedExample('does something', 0.345, "
@@ -43,6 +49,15 @@ def test_helper_methods():
                      color='red',
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+    prettystr = """
+    ContrivedExample(
+        'does something',
+        0.345,
+        shape='square',
+        color='red',
+        miles=22.0
+    )"""
+    assert pretty_repr(ce) == textwrap.dedent(prettystr).lstrip()
 
     class RecursionChecker:
         def __init__(self, a, b, c, d, e):
@@ -63,6 +78,11 @@ def test_helper_methods():
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
 
+        def __rich_repr__(self):
+            r = RichReprHelper(self)
+            self._repr_helper(r)
+            yield from r
+
     rc = RecursionChecker(None, None, None, None, None)
     rc.a = rc
     rc.b = rc
@@ -76,6 +96,7 @@ def test_helper_methods():
                      d=RecursionChecker(...),
                      e=RecursionChecker(...))"""
     assert pretty(rc) == textwrap.dedent(prettystr).lstrip()
+    assert pretty_repr(rc) == "RecursionChecker(..., ..., c=..., d=..., e=...)"
 
 
 def test_helper_exceptions():
@@ -93,11 +114,22 @@ def test_helper_exceptions():
         def __repr__(self):
             r = ReprHelper(self)
             self._repr_helper(r)
-            return str(r)
+            raise RuntimeError("unreachable")  # pragma: no cover
 
         def _repr_pretty_(self, p, cycle):
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
+
+        def __rich_repr__(self):
+            """Important that this is a generator, because rich catches errors
+            that happen when the function is called. As a generator, we can
+            postpone them until next() is called and then rich can't swallow
+            the error.
+            """
+            r = RichReprHelper(self)
+            self._repr_helper(r)
+            yield from r  # pragma: no cover
+            raise RuntimeError("unreachable")  # pragma: no cover
 
     a = A(1, 2)
 
@@ -106,6 +138,9 @@ def test_helper_exceptions():
 
     with pytest.raises(ValueError):
         pretty(a)
+
+    with pytest.raises(ValueError):
+        pretty_repr(a)
 
     class B:
         def __init__(self, a, b):
@@ -121,11 +156,22 @@ def test_helper_exceptions():
         def __repr__(self):
             r = ReprHelper(self)
             self._repr_helper(r)
-            return str(r)
+            raise RuntimeError("unreachable")  # pragma: no cover
 
         def _repr_pretty_(self, p, cycle):
             with PrettyReprHelper(self, p, cycle) as r:
                 self._repr_helper(r)
+
+        def __rich_repr__(self):
+            """Important that this is a generator, because rich catches errors
+            that happen when the function is called. As a generator, we can
+            postpone them until next() is called and then rich can't swallow
+            the error.
+            """
+            r = RichReprHelper(self)
+            self._repr_helper(r)
+            yield from r  # pragma: no cover
+            raise RuntimeError("unreachable")  # pragma: no cover
 
     b = B(1, 2)
 
@@ -134,6 +180,9 @@ def test_helper_exceptions():
 
     with pytest.raises(ValueError):
         pretty(b)
+
+    with pytest.raises(ValueError):
+        pretty_repr(b)
 
 
 def test_helper_raw():
@@ -149,6 +198,7 @@ def test_helper_raw():
     a = A("a", "b")
     assert repr(a) == "A(a, b=b)"
     assert pretty(a) == "A(a, b=b)"
+    assert pretty_repr(a) == "A(a, b=b)"
 
 
 def test_helper_mixin():
@@ -181,6 +231,15 @@ def test_helper_mixin():
                      color='red',
                      miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+    prettystr = """
+    ContrivedExample(
+        'does something',
+        0.345,
+        shape='square',
+        color='red',
+        miles=22.0
+    )"""
+    assert pretty_repr(ce) == textwrap.dedent(prettystr).lstrip()
 
     class ContrivedExampleKeywords(ContrivedExample):
         def _repr_helper_(self, r):
@@ -202,6 +261,15 @@ def test_helper_mixin():
                              color='red',
                              miles=22.0)"""
     assert pretty(ce) == textwrap.dedent(prettystr).lstrip()
+    prettystr = """
+    ContrivedExampleKeywords(
+        'does something',
+        0.345,
+        shape='square',
+        color='red',
+        miles=22.0
+    )"""
+    assert pretty_repr(ce) == textwrap.dedent(prettystr).lstrip()
 
 
 def test_helper_mixin_recursive():

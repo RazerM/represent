@@ -62,6 +62,7 @@ html_theme = "furo"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "ipython": ("https://ipython.readthedocs.io/en/stable/", None),
+    "rich": ("https://rich.readthedocs.io/en/stable/", None),
 }
 
 autodoc_member_order = "bysource"
