@@ -175,9 +175,7 @@ def _autorepr_decorate(
             repr_args.append(arg)
 
             if arg in kwonly:
-                raise ValueError(
-                    "keyword only argument '{}' cannot" " be positional".format(arg)
-                )
+                raise ValueError(f"keyword only argument '{arg}' cannot be positional")
             if keyword_started:
                 raise ValueError(
                     "positional argument '{}' cannot follow keyword"

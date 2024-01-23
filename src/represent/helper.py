@@ -93,14 +93,14 @@ class ReprHelper(BaseReprHelper):
 
     def positional_from_attr(self, attr_name):
         if self.keyword_started:
-            raise ValueError("positional arguments cannot " "follow keyword arguments")
+            raise ValueError("positional arguments cannot follow keyword arguments")
         self._ensure_comma()
         self.repr_parts.append(repr(getattr(self.other, attr_name)))
         self.iarg += 1
 
     def positional_with_value(self, value, raw=False):
         if self.keyword_started:
-            raise ValueError("positional arguments cannot " "follow keyword arguments")
+            raise ValueError("positional arguments cannot follow keyword arguments")
         self._ensure_comma()
         value = value if raw else repr(value)
         self.repr_parts.append(value)
@@ -166,7 +166,7 @@ class PrettyReprHelper(BaseReprHelper):
             return
 
         if self.keyword_started:
-            raise ValueError("positional arguments cannot " "follow keyword arguments")
+            raise ValueError("positional arguments cannot follow keyword arguments")
         self._ensure_comma()
         self.p.pretty(getattr(self.other, attr_name))
         self.iarg += 1
@@ -176,7 +176,7 @@ class PrettyReprHelper(BaseReprHelper):
             return
 
         if self.keyword_started:
-            raise ValueError("positional arguments cannot " "follow keyword arguments")
+            raise ValueError("positional arguments cannot follow keyword arguments")
         self._ensure_comma()
         if raw:
             self.p.text(str(value))
