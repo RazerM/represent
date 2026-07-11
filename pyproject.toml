@@ -35,6 +35,7 @@ dev = [
     { include-group = "check-sdist" },
     { include-group = "coverage" },
     { include-group = "docs" },
+    { include-group = "ruff" },
     { include-group = "test" },
 ]
 test = [
@@ -49,6 +50,9 @@ docs = [
 ]
 check-sdist = [
     "check-sdist",
+]
+ruff = [
+    "ruff",
 ]
 
 [tool.setuptools]
@@ -68,8 +72,12 @@ source = ["represent", ".tox/*/lib/python*/site-packages/represent"]
 precision = 1
 exclude_lines = ["pragma: no cover", "pass"]
 
-[tool.isort]
-profile = "black"
+[tool.ruff.lint]
+select = [
+    "E4", "E7", "E9", "F", # ruff defaults
+    "I", # isort
+    "UP", # pyupgrade
+]
 
 [tool.check-sdist]
 git-only = [
