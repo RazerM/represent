@@ -35,6 +35,7 @@ dev = [
     { include-group = "check-sdist" },
     { include-group = "coverage" },
     { include-group = "docs" },
+    { include-group = "nox" },
     { include-group = "ruff" },
     { include-group = "test" },
 ]
@@ -53,6 +54,9 @@ check-sdist = [
 ]
 ruff = [
     "ruff",
+]
+nox = [
+    "nox",
 ]
 
 [tool.setuptools]

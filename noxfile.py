@@ -1,0 +1,21 @@
+import nox
+
+nox.options.reuse_existing_virtualenvs = True
+nox.options.default_venv_backend = "uv"
+
+PYPROJECT = nox.project.load_toml("pyproject.toml")
+PYTHON_VERSIONS = nox.project.python_versions(PYPROJECT)
+
+
+@nox.session(python=PYTHON_VERSIONS)
+def tests(session: nox.Session) -> None:
+    session.run_install(
+        "uv", "sync", "--no-default-groups", "--group=coverage", "--group=test"
+    )
+    session.run("coverage", "run", "-m", "pytest", *session.posargs)
+
+
+@nox.session
+def docs(session: nox.Session) -> None:
+    session.run_install("uv", "sync", "--no-default-groups", "--group=docs")
+    session.run("sphinx-build", "-W", "-b", "html", "doc", "doc/_build/html")
