@@ -2,18 +2,18 @@
 
 [![PyPI Version][ppi]][ppl] [![Documentation][di]][dl] [![CI Status][gai]][gal] [![Coverage][cvi]][cvl] [![Python Version][pvi]][pvl] [![MIT License][mli]][mll]
 
-[ppi]: https://img.shields.io/pypi/v/represent.svg?style=flat-square
-[ppl]: https://pypi.python.org/pypi/represent/
-[pvi]: https://img.shields.io/badge/python-2.7%2C%203-brightgreen.svg?style=flat-square
+[ppi]: https://img.shields.io/pypi/v/represent.svg
+[ppl]: https://pypi.org/project/represent/
+[pvi]: https://img.shields.io/pypi/pyversions/represent.svg
 [pvl]: https://www.python.org/downloads/
-[mli]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+[mli]: https://img.shields.io/badge/license-MIT-blue.svg
 [mll]: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE
-[di]: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
+[di]: https://img.shields.io/badge/docs-latest-brightgreen.svg
 [dl]: https://represent.readthedocs.io/en/latest/
-[gai]: https://github.com/RazerM/represent/workflows/CI/badge.svg?branch=master
-[gal]: https://github.com/RazerM/represent/actions?workflow=CI
-[cvi]: https://img.shields.io/codecov/c/github/RazerM/represent/master.svg?style=flat-square
-[cvl]: https://codecov.io/github/RazerM/represent?branch=master
+[gai]: https://github.com/RazerM/represent/actions/workflows/ci.yml/badge.svg?branch=master
+[gal]: https://github.com/RazerM/represent/actions/workflows/ci.yml
+[cvi]: https://codecov.io/gh/RazerM/represent/graph/badge.svg
+[cvl]: https://codecov.io/gh/RazerM/represent
 
 ### Installation
 
