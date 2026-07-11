@@ -68,10 +68,9 @@ towncrier = [
 
 [tool.coverage.run]
 branch = true
+relative_files = true
 source = ["represent", "tests/"]
-
-[tool.coverage.paths]
-source = ["represent", ".tox/*/lib/python*/site-packages/represent"]
+parallel = true
 
 [tool.coverage.report]
 precision = 1
