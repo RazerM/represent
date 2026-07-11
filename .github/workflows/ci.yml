@@ -8,43 +8,58 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+env:
+  FORCE_COLOR: "1"
+  UV_PYTHON_DOWNLOADS: "false"
+
 jobs:
   tests:
     name: "Python ${{ matrix.python-version }}"
-    runs-on: "ubuntu-latest"
-
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
     steps:
-      - uses: "actions/checkout@v4"
-      - uses: "actions/setup-python@v5"
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "${{ matrix.python-version }}"
-      - name: "Install dependencies"
-        run: |
-          set -xe
-          python -VV
-          python -m site
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions
-
-      - name: "Run tox targets for ${{ matrix.python-version }}"
-        run: "python -m tox"
-      - name: "Convert coverage"
-        run: "python -m coverage xml"
-      - name: "Upload coverage to Codecov"
-        uses: "codecov/codecov-action@v4"
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          enable-cache: true
+      - run: uv run --group nox nox -s "tests-${{ matrix.python-version }}"
+      - run: uv run coverage xml
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  pre-commit:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.12"
-      - uses: pre-commit/action@v3.0.1
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          enable-cache: true
+      - uses: j178/prek-action@e98a699c41eb69ab013a45817a0406469a748f8d # v2.0.5
+      - run: uv sync --only-group check-sdist
+      - run: uv run check-sdist
+
+  alls-green:
+    if: always()
+    needs: [tests, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - run: test "${{ needs.tests.result }}" = success
+      - run: test "${{ needs.lint.result }}" = success
