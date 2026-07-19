@@ -32,6 +32,7 @@ coverage = [
     "coverage[toml]",
 ]
 dev = [
+    { include-group = "check-sdist" },
     { include-group = "coverage" },
     { include-group = "docs" },
     { include-group = "test" },
@@ -45,6 +46,9 @@ docs = [
     "parver",
     "sphinx",
     "furo",
+]
+check-sdist = [
+    "check-sdist",
 ]
 
 [tool.setuptools]
@@ -66,3 +70,8 @@ exclude_lines = ["pragma: no cover", "pass"]
 
 [tool.isort]
 profile = "black"
+
+[tool.check-sdist]
+git-only = [
+    ".gitignore",
+]
