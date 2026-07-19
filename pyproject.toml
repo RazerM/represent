@@ -27,13 +27,21 @@ classifiers = [
 Repository = "https://github.com/RazerM/represent"
 Documentation = "https://represent.readthedocs.io"
 
-[project.optional-dependencies]
+[dependency-groups]
+coverage = [
+    "coverage[toml]",
+]
+dev = [
+    { include-group = "coverage" },
+    { include-group = "docs" },
+    { include-group = "test" },
+]
 test = [
     "ipython",
     "pytest",
     "rich",
 ]
-docstest = [
+docs = [
     "parver",
     "sphinx",
     "furo",
