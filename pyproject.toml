@@ -39,6 +39,7 @@ dev = [
     { include-group = "nox" },
     { include-group = "ruff" },
     { include-group = "test" },
+    { include-group = "towncrier" },
 ]
 test = [
     "ipython",
@@ -59,6 +60,9 @@ ruff = [
 nox = [
     "nox",
 ]
+towncrier = [
+    "towncrier",
+]
 
 [tool.coverage.run]
 branch = true
@@ -77,3 +81,27 @@ select = [
     "I", # isort
     "UP", # pyupgrade
 ]
+
+[tool.towncrier]
+filename = "CHANGELOG.md"
+directory = "newsfragments"
+issue_format = "[{issue}](https://github.com/RazerM/represent/issues/{issue})"
+title_format = "## [{version}](https://github.com/RazerM/represent/releases/tag/{version}) - {project_date}"
+
+[[tool.towncrier.type]]
+name = "Added"
+
+[[tool.towncrier.type]]
+name = "Changed"
+
+[[tool.towncrier.type]]
+name = "Deprecated"
+
+[[tool.towncrier.type]]
+name = "Removed"
+
+[[tool.towncrier.type]]
+name = "Fixed"
+
+[[tool.towncrier.type]]
+name = "Security"
