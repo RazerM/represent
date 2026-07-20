@@ -891,7 +891,7 @@ wheels = [
 
 [[package]]
 name = "represent"
-version = "2.1"
+version = "2.2.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
