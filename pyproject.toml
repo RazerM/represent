@@ -28,7 +28,7 @@ classifiers = [
 Homepage = "https://github.com/RazerM/represent"
 Source = "https://github.com/RazerM/represent"
 Documentation = "https://represent.readthedocs.io"
-Changelog = "https://github.com/RazerM/represent/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/RazerM/represent/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 coverage = [

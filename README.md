@@ -7,10 +7,10 @@
 [pvi]: https://img.shields.io/pypi/pyversions/represent.svg
 [pvl]: https://www.python.org/downloads/
 [mli]: https://img.shields.io/badge/license-MIT-blue.svg
-[mll]: https://raw.githubusercontent.com/RazerM/represent/master/LICENSE
+[mll]: https://raw.githubusercontent.com/RazerM/represent/main/LICENSE
 [di]: https://img.shields.io/badge/docs-latest-brightgreen.svg
 [dl]: https://represent.readthedocs.io/en/latest/
-[gai]: https://github.com/RazerM/represent/actions/workflows/ci.yml/badge.svg?branch=master
+[gai]: https://github.com/RazerM/represent/actions/workflows/ci.yml/badge.svg?branch=main
 [gal]: https://github.com/RazerM/represent/actions/workflows/ci.yml
 [cvi]: https://codecov.io/gh/RazerM/represent/graph/badge.svg
 [cvl]: https://codecov.io/gh/RazerM/represent
