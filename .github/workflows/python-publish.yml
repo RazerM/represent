@@ -1,4 +1,4 @@
-name: Publish Python package
+name: Upload Python Package
 
 on:
   push:
@@ -7,23 +7,28 @@ on:
 
 permissions:
   contents: read
-  id-token: write
-  attestations: write
 
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/represent
+    permissions:
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
-          enable-cache: true
-      - run: uv build
-      - uses: pypa/gh-action-pypi-publish@2473ec6c6aa87f38946284d51289219fd0b87264 # release/v1
+          enable-cache: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          attestations: true
+          python-version: "3.x"
+      - name: Build
+        run: "uv build"
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@ba38be9e461d3875417946c167d0b5f3d385a247 # v1.14.1
