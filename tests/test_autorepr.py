@@ -1,7 +1,5 @@
 from contextlib import contextmanager
 from functools import partial
-from textwrap import dedent
-from types import MethodType
 from unittest.mock import Mock, patch
 
 import pytest

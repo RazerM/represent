@@ -214,12 +214,12 @@ def _autorepr_decorate(
                 raise ValueError(f"keyword only argument '{arg}' cannot be positional")
             if keyword_started:
                 raise ValueError(
-                    "positional argument '{}' cannot follow keyword"
-                    " argument '{}'".format(arg, keyword_started)
+                    f"positional argument '{arg}' cannot follow keyword"
+                    f" argument '{keyword_started}'"
                 )
         else:
             keyword_started = arg
-            repr_fstr_parts.append("{0}={{self.{0}!r}}".format(arg))
+            repr_fstr_parts.append(f"{arg}={{self.{arg}!r}}")
             repr_kw.append(arg)
 
     repr_fstr_parts.append(")")

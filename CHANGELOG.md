@@ -1,8 +1,6 @@
 # Change Log
 
-## [Unreleased][unreleased]
-
-N/A
+<!-- towncrier release notes start -->
 
 ## [2.1.0] - 2024-01-23
 
@@ -162,7 +160,6 @@ These aliases will raise deprecation warnings:
 
 - Only create class variables during first instantiation.
 
-[unreleased]: https://github.com/RazerM/represent/compare/2.1.0...HEAD
 [2.1.0]: https://github.com/RazerM/represent/compare/2.0.0..2.1.0
 [2.0.0]: https://github.com/RazerM/represent/compare/1.6.0.post0..2.0.0
 [1.6.0.post0]: https://github.com/RazerM/represent/compare/1.6.0...1.6.0.post0
