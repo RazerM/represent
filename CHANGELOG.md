@@ -6,15 +6,15 @@
 
 ### Added
 
-- Support for Python 3.13, 3.14, and 3.15. ([15](https://github.com/RazerM/represent/issues/15))
+- Support for Python 3.13, 3.14, and 3.15. ([#15](https://github.com/RazerM/represent/issues/15))
 
 ### Changed
 
-- Modernize project packaging, development tooling, and continuous integration. ([15](https://github.com/RazerM/represent/issues/15))
+- Modernize project packaging, development tooling, and continuous integration. ([#15](https://github.com/RazerM/represent/issues/15))
 
 ### Removed
 
-- Support for Python 3.8 and 3.9. ([15](https://github.com/RazerM/represent/issues/15))
+- Support for Python 3.8 and 3.9. ([#15](https://github.com/RazerM/represent/issues/15))
 
 ## [2.1.0] - 2024-01-23
 

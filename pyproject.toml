@@ -86,7 +86,7 @@ select = [
 [tool.towncrier]
 filename = "CHANGELOG.md"
 directory = "newsfragments"
-issue_format = "[{issue}](https://github.com/RazerM/represent/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/RazerM/represent/issues/{issue})"
 title_format = "## [{version}](https://github.com/RazerM/represent/releases/tag/{version}) - {project_date}"
 
 [[tool.towncrier.type]]
